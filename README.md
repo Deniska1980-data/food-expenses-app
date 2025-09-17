@@ -40,4 +40,4 @@ Aplikace podporuje více měn a automatický přepočet na CZK podle aktuálníh
 - Vše bylo opraveno a Live Demo nyní běží.  
 - Na aplikaci dále pracujeme a postupně ji vylepšujeme.
 
-
+Created by / Vytvořeno: **Denisa (2025)**
