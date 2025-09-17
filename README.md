@@ -6,7 +6,7 @@ It helps users log, analyze and visualize their daily expenses (food, groceries,
 The app supports multiple currencies and automatic conversion to CZK.  
 
 ### 🚀 Live Demo
-👉 [Open the app on Streamlit Cloud](https://food-expenses-app-p5ttsr9tpumedcsdkhldw4.streamlit.app/#moj-mesacny-vydavkovy-dennik)
+👉 [Open the app on Streamlit Cloud](https://food-expenses-app-p5tts7gtpumedcsdkhdlw4.streamlit.app/#moj-mesacny-vydavkovy-dennik)
 
 ### 📌 Status
 - App is still under development and testing (work in progress).  
@@ -25,7 +25,7 @@ Pomáhá uživatelům zapisovat, analyzovat a vizualizovat denní výdaje.
 Aplikace podporuje více měn a automatický přepočet na CZK podle aktuálního kurzu.  
 
 ### 🚀 Live Demo
-👉 [Otevřít aplikaci na Streamlit Cloud](https://food-expenses-app-p5ttsr9tpumedcsdkhldw4.streamlit.app/#moj-mesacny-vydavkovy-dennik)
+👉 [Otevřít aplikaci na Streamlit Cloud](https://food-expenses-app-p5tts7gtpumedcsdkhdlw4.streamlit.app/#moj-mesacny-vydavkovy-dennik)
 
 ### 📌 Status
 - Aplikace je stále ve vývoji a testování (práce probíhá).  
