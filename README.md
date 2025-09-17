@@ -13,7 +13,7 @@ Umožňuje zapisovat, analyzovat a vizualizovat denní náklady.
 ---
 
 ## 🚀 Live Demo
-👉 [food-expenses-app on Streamlit Cloud](https://food-expenses-app-p5tts7gtpumedcsdckhldw4.streamlit.app/)
+👉 [food-expenses-app on Streamlit Cloud](https://food-expenses-app-p5tts7gtpumedcsdkhdlw4.streamlit.app/#moj-mesacny-vydavkovy-dennik)
 
 ---
 
