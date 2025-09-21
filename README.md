@@ -39,6 +39,6 @@ Aplikace podporuje více měn a automatický přepočet na CZK podle aktuálníh
   - potíže s nasazením z GitHubu do Streamlitu,  
   - chybný odkaz na demo.  
 - Vše bylo opraveno a Live Demo nyní běží.  
-- Na aplikaci dále pracujeme a postupně ji vylepšujeme.
+- Na aplikaci dále pracuji a postupně ji vylepšuji.
 
 Created by / Vytvořeno: **Denisa (2025)**
