@@ -27,18 +27,13 @@ import streamlit as st
 
 import pandas as pd
 
-st.title("Moj mesačný výdavkový denník")
+st.title("Môj mesačný výdavkový denník")
 
 df=pd.read_csv("expenses.csv")
 
 st.dataframe(df.head())
 
-import streamlit as st
-import pandas as pd
-from datetime import date
 
-st.set_page_config(page_title="Môj mesačný výdavkový denník", layout="centered")
-st.title("💸 Môj mesačný výdavkový denník")
 
 
 Created by / Vytvořeno: **Denisa (2025)**
