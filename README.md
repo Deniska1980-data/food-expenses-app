@@ -10,14 +10,6 @@ The app supports multiple currencies and automatic conversion to CZK.
 
 👉 [Open the app on Streamlit Cloud](https://food-expenses-app-p5tts7gtpumedcsdkhdlw4.streamlit.app/#moj-mesacny-vydavkovy-dennik)
 
-### 📌 Code Sample 
-```python
-import streamlit as st
-import pandas as pd
-
-st.title("Môj mesačný výdavkový denník")
-df = pd.read_csv("expenses.csv")
-st.dataframe(df.head())
 
 ### 📌 Status
 - App is still under development and testing (work in progress).  
@@ -40,14 +32,6 @@ Aplikace podporuje více měn a automatický přepočet na CZK podle aktuálníh
 
 👉 [Otevřít aplikaci na Streamlit Cloud](https://food-expenses-app-p5tts7gtpumedcsdkhdlw4.streamlit.app/#moj-mesacny-vydavkovy-dennik)
 
-### 📌 Ukážka kódu
-```python
-import streamlit as st
-import pandas as pd
-
-st.title("Môj mesačný výdavkový denník")
-df = pd.read_csv("expenses.csv")
-st.dataframe(df.head())
 
 ### 📌 Status
 - Aplikace je stále ve vývoji a testování (práce probíhá).  
