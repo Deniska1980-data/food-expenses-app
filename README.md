@@ -22,11 +22,15 @@ The app supports multiple currencies and automatic conversion to CZK.
 - Further development and improvements are in progress.
 - 
 ### 📌 Code Sample - Python
+
 import streamlit as st
+
 import pandas as pd
 
 st.title("Moj mesačný výdavkový denník")
+
 df=pd.read_csv("expenses.csv")
+
 st.dataframe(df.head())
 
 
