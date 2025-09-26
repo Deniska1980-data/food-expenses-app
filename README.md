@@ -26,11 +26,11 @@
   - 🛠️ **8. floor: (Repairs / Opravovne, Servisy)**  
   - 💡 **9. floor: (Other expenses / Ostatné výdavky)**  
 
-- **🎨 Better UI/UX styling** – adapting **colors, backgrounds and font sizes**  
+- **🎨 Better UI/UX styling** – adapting colors, backgrounds and font sizes  
   for all age groups (kids, adults, seniors).  
 
 - **📱 Accessibility for everyone** – playful design, clear layout, bigger fonts,  
-  contrast colors and **readable text in brackets for screen readers** (for visually impaired users).  
+  contrast colors and readable text in brackets for screen readers (for visually impaired users).  
 
 - **🖼️ Icons and pictograms** – each category uses an emoji/pictogram,  
   so even users who don’t read category names can recognize it quickly.  
@@ -43,6 +43,10 @@
 A simple bilingual **expenses tracker prototype** built with **Streamlit**.  
 It helps users **log, analyze and visualize** their daily expenses.  
 
+⚠️ **Note:** This app is still **in development** – it is currently a **prototype**.  
+Only a few basic categories are included for now to test functionality.  
+More categories, features and the final design (elevator-style) will be added step by step.  
+
 - Two language versions: **Slovak/Czech** and **English**  
 - Currency conversion (**CZK** as base)  
 - Categories visualized as **elevator floors with pictograms and text labels**  
@@ -52,15 +56,12 @@ It helps users **log, analyze and visualize** their daily expenses.
 This prototype was **tested for functionality** and continuously improved:  
 - ✅ Fixed error messages  
 - ✅ Added dual-language labels (Slovak + Czech)  
-- ✅ Retested the app after every change
+- ✅ Retested the app after every change  
 
-### 🖼 Screenshots  
-> Note: Screenshots are illustrative / Obrázky sú ilustračné  
-<td align="center">SK Slovak / CZ Czech version<br><br>
-<img src="screenshot1.JPG" width="400">
-</td>
-</tr>
-</table>
+### 🖼️ Screenshot
+*Note: illustrative example / Prototype view*  
+
+[![Screenshot](screenshot1.JPG)](screenshot1.JPG)
 
 ### 🧑‍💻 Example code snippet
 ```python
@@ -81,21 +82,30 @@ streamlit run app.py
 
 
 ### 🇸🇰 Slovenská / CZ Česká verzia
-### 📌 O projekte
+📌 O projekte
 
 Jednoduchý dvojjazyčný prototyp na sledovanie výdavkov vytvorený v Streamlite.
 Pomáha používateľom zaznamenávať, analyzovať a vizualizovať svoje denné výdavky.
-Dve jazykové verzie: slovenská/česká a anglická
-Prepočítavanie mien (základná mena CZK)
-Kategórie budú vizualizované ako poschodia výťahu s piktogramami a názvami v zátvorke
-Veselé a hravé prostredie vhodné aj pre deti či starších používateľov
-Appka bude čitateľná aj pre slabozrakých a nevidiacich (čítačky textu budú čítat názvy v zátvorkách)
 
-### 🛠️ Poznámky k vývoju
+⚠️ Upozornenie: Aplikácia je stále vo vývoji – zatiaľ ide o prototyp.
+Zahrnuté sú iba základné kategórie na testovanie funkčnosti.
+Ďalšie kategórie, funkcie a finálny dizajn (výťahové poschodia) budú doplnené postupne.
+
+Dve jazykové verzie: slovenská/česká a anglická
+
+Prepočítavanie mien (základná mena CZK)
+
+Kategórie budú vizualizované ako poschodia výťahu s piktogramami a názvami v zátvorke
+
+Veselé a hravé prostredie vhodné aj pre deti či starších používateľov
+
+Appka bude čitateľná aj pre slabozrakých a nevidiacich (čítačky textu prečítajú názvy v zátvorkách)
+
+🛠️ Poznámky k vývoju
 
 Tento prototyp bol testovaný z hľadiska funkčnosti a postupne vylepšovaný:
 
-✅ Doplnila som dvojjazyčné názvy (slovenské{české) + po přepnutí anglická verzia
+✅ Doplnila som dvojjazyčné názvy (slovenské/české) + anglickú verziu
 
 ✅ Opravila som chybové hlášky
 
@@ -103,8 +113,8 @@ Tento prototyp bol testovaný z hľadiska funkčnosti a postupne vylepšovaný:
 
 
 ## 🖼️ Ukážky
-
-Poznámka: Obrázky sú ilustračné.
+Poznámka: Obrázky sú ilustračné. 
+[![Screenshot](screenshot1.JPG)](screenshot1.JPG)
 
 ### 🧑‍💻 Ukážka kódu
 import streamlit as st
