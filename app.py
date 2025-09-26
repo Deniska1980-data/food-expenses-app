@@ -4,20 +4,16 @@ from datetime import date as dt_date
 
 st.set_page_config(page_title="Výdavkový denník", layout="centered")
 
-# --- Language Switch (flags + text) ---
-col1, col2 = st.columns([9, 2])
+# --- Prepínač jazykov s vlajkami ---
+col1, col2 = st.columns([8, 2])
 with col2:
-    choice = st.radio(
-        "Language",
-        ["🇸🇰 SK/CZK", "🇬🇧 ENG"],
-        horizontal=True,
-        label_visibility="collapsed"
+    lang = st.radio(
+        "",
+        ["🇸🇰 Slovensko/Česko", "🇬🇧 English"],
+        horizontal=True
     )
 
-# Nastavenie jazyka podľa voľby
-lang = "sk" if choice.startswith("🇸🇰") else "en"
-
-# --- Slovak/Czech texts ---
+# --- Slovenský & Český text ---
 texts_sk = {
     "title": "💸 Môj mesačný výdavkový denník („Výdejový deník“)",
     "intro": "Zaznamenaj si svoje nákupy a výdavky – nech máš prehľad, aj keď si na dovolenke ☀️ / "
@@ -46,11 +42,11 @@ texts_sk = {
              "Zatím nemáš žádné nákupy. Přidej alespoň jeden a uvidíš svá data ✨",
     "countries": ["Slovensko / Slovensko", "Česko / Česko", "Chorvátsko / Chorvatsko", "Iné / Jiné"],
     "currencies": ["CZK (Kč)", "EUR (€)", "USD ($)", "GBP (£)"],
-    "categories": ["Potraviny / Potraviny", "Drogérie / Drogérie", "Doprava / Doprava",
+    "categories": ["Potraviny / Potraviny", "Drogérie / Drogérie", "Doprava / Doprava", 
                    "Reštaurácie a bary / Restaurace a bary", "Zábava / Zábava"]
 }
 
-# --- English texts ---
+# --- Anglický text ---
 texts_en = {
     "title": "💸 My Monthly Expense Diary",
     "intro": "Record your purchases and expenses – keep track, even on vacation ☀️",
@@ -62,7 +58,7 @@ texts_en = {
     "amount": "💰 Amount",
     "category": "📂 Category",
     "note": "📝 Note (e.g. shampoo, beer in bar...)",    
-    "save": "💾 Save purchase",
+    "save": "💾 Save Purchase",
     "added": "✅ Purchase has been added!",
     "list": "📊 List of Purchases",
     "summary": "📈 Monthly Expense Summary",
@@ -76,20 +72,20 @@ texts_en = {
     "categories": ["Food", "Drugstore", "Transport", "Restaurants & Bars", "Entertainment"]
 }
 
-# --- Choose texts ---
-t = texts_sk if lang == "sk" else texts_en
+# --- Vyber jazyk ---
+t = texts_sk if "Slovensko" in lang else texts_en
 
-# --- Initialize DataFrame ---
+# --- Inicializácia dát ---
 if "data" not in st.session_state:
     st.session_state.data = pd.DataFrame(columns=[
         "Date", "Shop", "Country", "Currency", "Amount", "Category", "Note", "Converted_CZK"
     ])
 
-# --- Title and Intro ---
+# --- Titulok a úvod ---
 st.title(t["title"])
 st.markdown(t["intro"])
 
-# --- Input Form ---
+# --- Formulár na pridanie nákupu ---
 st.subheader(t["add"])
 
 with st.form("input_form"):
@@ -108,7 +104,7 @@ with st.form("input_form"):
     note = st.text_input(t["note"])
     submitted = st.form_submit_button(t["save"])
 
-    # 🔹 Temporary fixed exchange rates (later: CNB API)
+    # 🔹 Pevné kurzy (neskôr: API ČNB)
     if currency.startswith("EUR") or currency == "€":
         rate = 25.0
     elif currency.startswith("USD") or currency == "$":
@@ -136,11 +132,11 @@ with st.form("input_form"):
         )
         st.success(t["added"])
 
-# --- Display Table ---
+# --- Tabuľka ---
 st.subheader(t["list"])
 st.dataframe(st.session_state.data, use_container_width=True)
 
-# --- Calculations ---
+# --- Súhrn ---
 st.subheader(t["summary"])
 
 data = st.session_state.data
@@ -154,7 +150,7 @@ if not data.empty:
 
     st.markdown(f"### {t['total']}: {total_sum:.2f} CZK")
 
-    # --- Educational Tip ---
+    # --- Tip ---
     top_category = category_summary.idxmax()
     percent = category_summary[top_category] / total_sum * 100
     if (top_category in ["Zábava / Zábava", "Entertainment"]) and percent > 30:
