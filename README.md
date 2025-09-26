@@ -25,7 +25,7 @@ This prototype was **tested for functionality**, improved with:
 ### 🖼️ Screenshots
 *Note: Screenshots are illustrative.*
 
-![App Screenshot](screenshot.png)
+![App Screenshot](screenshot1.JPG)
 
 ---
 
