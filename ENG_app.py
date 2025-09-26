@@ -7,10 +7,10 @@ st.set_page_config(page_title="My Monthly Expense Diary", page_icon="🧾", layo
 st.title("🧾 My Monthly Expense Diary")
 st.write("Log your expenses, track conversions to CZK, and keep your budget under control.")
 
-# --- Initialize dataframe ---
-if "data" not in st.session_state:
-    st.session_state.data = pd.DataFrame(columns=[
-        "Date", "Shop", "Country", "Currency", "Amount", "Category", "Note", "Amount_CZK"])
+# --- Initialize dataframe in session state ---
+if "purchases" not in st.session_state:
+    st.session_state["purchases"] = pd.DataFrame(columns=[
+        "Date", "Shop", "Country", "Currency", "Amount", "Category", "Note", "Amount (CZK)"])
 
 # Form for entering a purchase
 with st.form("purchase_form", clear_on_submit=True):
@@ -72,6 +72,7 @@ if st.session_state["purchases"]:
         entertainment = summary.loc[summary["Category"] == "Entertainment", "Amount (CZK)"].values[0]
         if entertainment / total > 0.3:
             st.warning("⚠️ Warning: You are spending more than 30% on Entertainment.")
+
 
 
 
