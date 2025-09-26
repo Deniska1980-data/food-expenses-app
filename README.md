@@ -27,15 +27,14 @@ import streamlit as st
 import pandas as pd
 from datetime import date as dt_date
 
-
-### 🖼️ Screenshots
-*Note: Screenshots are illustrative / Obrázky sú ilustračné  
-
-<td align="center">🇸🇰 Slovak / CZ Czech version<br><br>
+### 🖼 Screenshots  
+> Note: Screenshots are illustrative / Obrázky sú ilustračné  
+<td align="center">🇸🇰🇨🇿 Slovak / Czech version<br><br>
 <img src="screenshot1.JPG" width="400">
 </td>
-<table>
-<tr>
+</tr>
+</table>
+
 ---
 
 ### 🚀 How to run locally
