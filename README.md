@@ -115,10 +115,6 @@ Tento prototyp bol testovaný z hľadiska funkčnosti a postupne vylepšovaný:
 ✅ Po každej úprave som aplikáciu znovu testovala
 
 
-## 🖼️ Ukážky
-Poznámka: Obrázky sú ilustračné. 
-[![Screenshot](screenshot1.JPG)](screenshot1.JPG)
-
 ### 🧑‍💻 Ukážka kódu
 import streamlit as st
 import pandas as pd
