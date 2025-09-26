@@ -23,7 +23,7 @@ This prototype was **tested for functionality** and continuously improved:
 - 
 ### 🖼 Screenshots  
 > Note: Screenshots are illustrative / Obrázky sú ilustračné  
-<td align="center">🇸🇰🇨🇿 Slovak / Czech version<br><br>
+<td align="center">SK Slovak / CZ Czech version<br><br>
 <img src="screenshot1.JPG" width="400">
 </td>
 </tr>
