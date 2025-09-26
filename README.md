@@ -58,8 +58,13 @@ This prototype was **tested for functionality** and continuously improved:
 - ✅ Added dual-language labels (Slovak + Czech)  
 - ✅ Retested the app after every change
 
-
-
+## 🖼 Screenshots  
+> Note: Screenshots are illustrative / Obrázky sú ilustračné  
+<td align="center"> SK Slovak / CZ Czech version<br><br>
+<img src="screenshot1.JPG" width="400">
+</td>
+<table>
+<tr>
 
 ### 🧑‍💻 Example code snippet
 ```python
