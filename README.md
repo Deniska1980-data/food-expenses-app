@@ -106,15 +106,14 @@ Veselé a hravé prostredie vhodné aj pre deti či starších používateľov
 Appka bude čitateľná aj pre slabozrakých a nevidiacich (čítačky textu prečítajú názvy v zátvorkách)
 
 🛠️ Poznámky k vývoju
-
 Tento prototyp bol testovaný z hľadiska funkčnosti a postupne vylepšovaný:
 
 ✅ Doplnila som dvojjazyčné názvy (slovenské/české) + anglickú verziu
-
 ✅ Opravila som chybové hlášky
-
 ✅ Po každej úprave som aplikáciu znovu testovala
-
+✅ Prototyp testovaný na viacerých zariadeniach (mobil + notebook)
+✅ Zdieľaný odkaz – potvrdené, že appka funguje aj u iných používateľov
+✅ Prvá pozitívna spätná väzba od používateľov
 
 ### 🧑‍💻 Ukážka kódu
 import streamlit as st
