@@ -2,14 +2,6 @@
 
 [👉 Open the app on Streamlit](https://food-expenses-app-p5tts7gtpumedcsdkhdlw4.streamlit.app/)
 
-### 🖼️ Screenshots
-*Note: Screenshots are illustrative / Obrázky sú ilustračné  
-
-<td align="center">🇸🇰🇨🇿 Slovak / Czech version<br><br>
-<img src="screenshot1.JPG" width="400">
-</td>
-<table>
-<tr>
 ---
 
 ## 🇬🇧 English
@@ -28,6 +20,14 @@ This prototype was **tested for functionality**, improved with:
 ✔️ Fixed error messages  
 ✔️ Retested after each improvement  
 
+### 🖼️ Screenshots
+*Note: Screenshots are illustrative / Obrázky sú ilustračné  
+
+<td align="center">🇸🇰🇨🇿 Slovak / Czech version<br><br>
+<img src="screenshot1.JPG" width="400">
+</td>
+<table>
+<tr>
 ---
 
 ### 🧑‍💻 Example code snippet
@@ -44,6 +44,7 @@ cd food-expenses-app
 pip install -r requirements.txt
 3. Run Streamlit app
 streamlit run app.py
+
 
 ### 🇸🇰🇨🇿 Slovenská / Česká verzia
 ## 📌 O projekte
