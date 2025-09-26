@@ -8,6 +8,7 @@
 ### 📌 About the project
 A simple bilingual **expenses tracker prototype** built with **Streamlit**.  
 It helps users **log, analyze and visualize** their daily expenses.  
+**Tested and confirmed working** in real environments across Czech Republic, Slovakia and Germany **(CZ/SK/DE)**.
 
 ⚠️ **Note:** This app is still **in development** – it is currently a **prototype**.  
 Only a few basic categories are included for now to test functionality.  
