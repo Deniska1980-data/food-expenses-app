@@ -21,7 +21,9 @@ More categories, features and the final design (elevator-style) will be added st
 
 ### 🛠️ Development notes
 This prototype was **tested for functionality** and continuously improved:  
-- ✅ Fixed error messages  
+- ✅ The initial code base was AI-assisted, but I rewrote, adapted, and debugged it myself.
+- ✅ Fixed issues when some parts did not work as expected.
+- ✅ Customized layout, labels and bilingual support manually in code.
 - ✅ Added dual-language labels (Slovak + Czech)  
 - ✅ Retested the app after every change  
 - ✅ Prototype tested on multiple devices (mobile + notebook)  
@@ -107,9 +109,12 @@ Veselé a hravé prostredie vhodné aj pre deti či starších používateľov
 
 Appka bude čitateľná aj pre slabozrakých a nevidiacich (čítačky textu prečítajú názvy v zátvorkách)
 
-🛠️ Poznámky k vývoju
-Tento prototyp bol testovaný z hľadiska funkčnosti a postupne vylepšovaný:
+🛠️ Poznámky k vývoj
 
+✅Tento prototyp bol testovaný z hľadiska funkčnosti a postupne vylepšovaný:
+✅Základ kódu vznikol s pomocou AI, ale sama som ho prepísala, prispôsobila a odladila.
+✅ Opravila som časti, ktoré nefungovali podľa očakávania.
+✅ Ručne som doplnila úpravy vzhľadu, názvy a dvojjazyčnú podporu.
 ✅ Doplnila som dvojjazyčné názvy (slovenské/české) + anglickú verziu
 ✅ Opravila som chybové hlášky
 ✅ Po každej úprave som aplikáciu znovu testovala
