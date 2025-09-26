@@ -4,12 +4,12 @@
 
 ### 🖼️ Screenshots
 *Note: Screenshots are illustrative / Obrázky sú ilustračné  
-<table>
-<tr>
+
 <td align="center">🇸🇰🇨🇿 Slovak / Czech version<br><br>
 <img src="screenshot1.JPG" width="400">
 </td>
-
+<table>
+<tr>
 ---
 
 ## 🇬🇧 English
