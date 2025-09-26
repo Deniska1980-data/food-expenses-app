@@ -19,14 +19,8 @@ It helps users **log, analyze and visualize** their daily expenses.
 This prototype was **tested for functionality** and continuously improved:  
 - ✅ Fixed error messages  
 - ✅ Added dual-language labels (Slovak + Czech)  
-- ✅ Retested the app after every change  
-
-### 🧑‍💻 Example code snippet
-```python
-import streamlit as st
-import pandas as pd
-from datetime import date as dt_date
-
+- ✅ Retested the app after every change
+- 
 ### 🖼 Screenshots  
 > Note: Screenshots are illustrative / Obrázky sú ilustračné  
 <td align="center">🇸🇰🇨🇿 Slovak / Czech version<br><br>
@@ -34,6 +28,12 @@ from datetime import date as dt_date
 </td>
 </tr>
 </table>
+
+### 🧑‍💻 Example code snippet
+```python
+import streamlit as st
+import pandas as pd
+from datetime import date as dt_date
 
 ---
 
