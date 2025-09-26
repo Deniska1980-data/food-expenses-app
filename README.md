@@ -2,6 +2,14 @@
 
 [👉 Open the app on Streamlit](https://food-expenses-app-p5tts7gtpumedcsdkhdlw4.streamlit.app/)
 
+### 🖼️ Screenshots
+*Note: Screenshots are illustrative / Obrázky sú ilustračné  
+<table>
+<tr>
+<td align="center">🇸🇰🇨🇿 Slovak / Czech version<br><br>
+<img src="screenshot1.JPG" width="400">
+</td>
+
 ---
 
 ## 🇬🇧 English
@@ -19,17 +27,6 @@ This prototype was **tested for functionality**, improved with:
 ✔️ Dual-language labels (Slovak + Czech)  
 ✔️ Fixed error messages  
 ✔️ Retested after each improvement  
-
----
-
-### 🖼️ Screenshots
-*Note: Screenshots are illustrative / Obrázky sú ilustračné  
-
-<table>
-<tr>
-<td align="center">🇸🇰🇨🇿 Slovak / Czech version<br><br>
-<img src="screenshot1.JPG" width="400">
-</td>
 
 ---
 
