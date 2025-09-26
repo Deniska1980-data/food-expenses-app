@@ -1,92 +1,127 @@
-code = """
 import streamlit as st
 import pandas as pd
-from datetime import date
+from datetime import date as dt_date
 
-st.set_page_config(page_title="Môj mesačný výdavkový denník", layout="centered")
-st.title("💸 Môj mesačný výdavkový denník")
+st.set_page_config(page_title="Výdavkový denník", layout="centered")
 
-st.markdown("Zaznamenaj si svoje nákupy a výdavky – nech máš prehľad, aj keď si na dovolenke ☀️")
+# --- Language Switch (top right) ---
+col1, col2 = st.columns([8,1])
+with col2:
+    lang = st.selectbox("Language", ["🇸🇰 SK (CZK)", "🇬🇧 ENG"], label_visibility="collapsed")
 
-# --- Inicializácia dátového rámca ---
+# --- Slovak texts ---
+texts_sk = {
+    "title": "💸 Môj mesačný výdavkový denník („Výdejový deník“)",
+    "intro": "Zaznamenaj si svoje nákupy a výdavky – nech máš prehľad, aj keď si na dovolenke ☀️",
+    "add": "➕ Pridať nákup",
+    "date": "📅 Dátum nákupu",
+    "shop": "🏪 Obchod / miesto",
+    "country": "🌍 Krajina",
+    "currency": "💱 Mena",
+    "amount": "💰 Suma",
+    "category": "📂 Kategória",
+    "note": "📝 Poznámka (napr. kúpený aj šampón, pivo v bare...)",    
+    "save": "💾 Uložiť nákup",
+    "added": "✅ Nákup bol pridaný!",
+    "list": "📊 Zoznam nákupov",
+    "summary": "📈 Súhrn mesačných výdavkov",
+    "total": "💰 Celkové výdavky",
+    "tip_high": "💡 Pozor! Na zábavu míňaš viac ako 30 %. Skús odložiť časť bokom na nečakané výdavky. 😉",
+    "tip_info": "Najviac si minul(a) na _{cat}_ ({pct:.1f}% z celkových výdavkov).",
+    "empty": "Zatiaľ nemáš žiadne nákupy. Pridaj aspoň jeden a uvidíš svoje dáta ✨",
+    "countries": ["Slovensko", "Česko", "Chorvátsko", "Iné"],
+    "currencies": ["CZK", "EUR", "USD", "GBP"],
+    "categories": ["Potraviny", "Drogérie", "Doprava", "Reštaurácie a bary", "Zábava"]
+}
+
+# --- English texts ---
+texts_en = {
+    "title": "💸 My Monthly Expense Diary",
+    "intro": "Record your purchases and expenses – keep track, even on vacation ☀️",
+    "add": "➕ Add Purchase",
+    "date": "📅 Date",
+    "shop": "🏪 Shop",
+    "country": "🌍 Country",
+    "currency": "💱 Currency",
+    "amount": "💰 Amount",
+    "category": "📂 Category",
+    "note": "📝 Note (e.g. shampoo, beer in bar...)",    
+    "save": "💾 Save purchase",
+    "added": "✅ Purchase has been added!",
+    "list": "📊 List of Purchases",
+    "summary": "📈 Monthly Expense Summary",
+    "total": "💰 Total Expenses",
+    "tip_high": "💡 Watch out! You’re spending more than 30% on entertainment. Try saving a portion for unexpected expenses. 😉",
+    "tip_info": "Most of your spending went to _{cat}_ ({pct:.1f}% of total expenses).",
+    "empty": "No purchases yet. Add at least one to see your data ✨",
+    "countries": ["Slovakia", "Czechia", "Croatia", "Other"],
+    "currencies": ["CZK (Czech koruna)", "EUR (Euro)", "USD (US Dollar)", "GBP (British Pound)"],
+    "categories": ["Food", "Drugstore", "Transport", "Restaurants & Bars", "Entertainment"]
+}
+
+# --- Choose language ---
+t = texts_sk if lang.startswith("🇸🇰") else texts_en
+
+# --- Initialize DataFrame ---
 if "data" not in st.session_state:
     st.session_state.data = pd.DataFrame(columns=[
-        "Dátum", "Obchod", "Krajina", "Mena", "Suma", "Kategória", "Poznámka", "Prepočet_Kč"
+        "Date", "Shop", "Country", "Currency", "Amount", "Category", "Note", "Converted_CZK"
     ])
 
-# --- Formulár na zadávanie údajov ---
-st.subheader("➕ Pridať nákup")
+# --- Title and Intro ---
+st.title(t["title"])
+st.markdown(t["intro"])
+
+# --- Input Form ---
+st.subheader(t["add"])
 
 with st.form("input_form"):
     col1, col2 = st.columns(2)
+
     with col1:
-        datum = st.date_input("Dátum nákupu", value=date.today())
-        obchod = st.text_input("Obchod / miesto")
-        krajina = st.selectbox("Krajina", ["Česko", "Slovensko", "Chorvátsko", "Iné"])
+        date = st.date_input(t["date"], value=dt_date.today())
+        shop = st.text_input(t["shop"])
+        country = st.selectbox(t["country"], t["countries"])
+
     with col2:
-        mena = st.selectbox("Mena", ["Kč", "€", "$", "£"])
-        suma = st.number_input("Suma", min_value=0.0, format="%.2f")
-        kategoria = st.selectbox("Kategória", ["Potraviny", "Drogérie", "Doprava", "Reštaurácie a bary", "Zábava"])
+        currency = st.selectbox(t["currency"], t["currencies"])
+        amount = st.number_input(t["amount"], min_value=0.0, step=0.5)
+        category = st.selectbox(t["category"], t["categories"])
 
-    poznamka = st.text_input("Poznámka (napr. kúpený aj šampón, pivo v bare...)")
+    note = st.text_input(t["note"])
+    submitted = st.form_submit_button(t["save"])
 
-    # 🔹 Zatiaľ fixné kurzy (neskôr CNB API)
-    if mena == "€":
-        kurz = 25.0
-    elif mena == "$":
-        kurz = 20.0
-    elif mena == "£":
-        kurz = 30.0
+    # 🔹 Temporary fixed exchange rates (later: CNB API)
+    if currency.startswith("EUR") or currency == "€":
+        rate = 25.0
+    elif currency.startswith("USD") or currency == "$":
+        rate = 20.0
+    elif currency.startswith("GBP") or currency == "£":
+        rate = 30.0
     else:
-        kurz = 1.0
-
-    submitted = st.form_submit_button("💾 Uložiť nákup")
+        rate = 1.0
 
     if submitted:
-        prepocet = suma * kurz
-        novy_zaznam = {
-            "Dátum": datum,
-            "Obchod": obchod,
-            "Krajina": krajina,
-            "Mena": mena,
-            "Suma": suma,
-            "Kategória": kategoria,
-            "Poznámka": poznamka,
-            "Prepočet_Kč": round(prepocet, 2)
+        converted = amount * rate
+        new_record = {
+            "Date": date,
+            "Shop": shop,
+            "Country": country,
+            "Currency": currency,
+            "Amount": amount,
+            "Category": category,
+            "Note": note,
+            "Converted_CZK": round(converted, 2)
         }
-        st.session_state.data = pd.concat([st.session_state.data, pd.DataFrame([novy_zaznam])], ignore_index=True)
-        st.success("Nákup bol pridaný ✅")
+        st.session_state.data = pd.concat(
+            [st.session_state.data, pd.DataFrame([new_record])],
+            ignore_index=True
+        )
+        st.success(t["added"])
 
-# --- Zobrazenie tabuľky ---
-st.subheader("📊 Zoznam nákupov")
+# --- Display Table ---
+st.subheader(t["list"])
 st.dataframe(st.session_state.data, use_container_width=True)
 
-# --- Výpočty ---
-st.subheader("📈 Súhrn mesačných výdavkov")
-
-data = st.session_state.data
-
-if not data.empty:
-    suma_celkovo = data["Prepočet_Kč"].sum()
-    suhrn_kategorie = data.groupby("Kategória")["Prepočet_Kč"].sum()
-
-    for kategoria, suma in suhrn_kategorie.items():
-        st.markdown(f"**{kategoria}:** {suma:.2f} Kč")
-
-    st.markdown(f"### 💰 Celkové výdavky: {suma_celkovo:.2f} Kč")
-
-    # --- Edu tip ---
-    top = suhrn_kategorie.idxmax()
-    percento = suhrn_kategorie[top] / suma_celkovo * 100
-    if top == "Zábava" and percento > 30:
-        st.warning("💡 Pozor! Na zábavu míňaš viac ako 30 %. Skús odložiť časť bokom na nečakané výdavky. 😉")
-    else:
-        st.info(f"Najviac si minula na _{top}_ ({percento:.1f}% z celkových výdavkov).")
-else:
-    st.info("Zatiaľ nemáš žiadne nákupy. Pridaj aspoň jeden a uvidíš svoje dáta ✨")
-"""
-
-with open("app.py", "w") as f:
-    f.write(code)
-
-
+# --- Calculations ---
+st.subheade
