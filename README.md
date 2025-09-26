@@ -58,11 +58,6 @@ This prototype was **tested for functionality** and continuously improved:
 - ✅ Added dual-language labels (Slovak + Czech)  
 - ✅ Retested the app after every change  
 
-### 🖼️ Screenshot
-*Note: illustrative example / Prototype view*  
-
-[![Screenshot](screenshot1.JPG)](screenshot1.JPG)
-
 ### 🧑‍💻 Example code snippet
 ```python
 import streamlit as st
