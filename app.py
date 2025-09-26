@@ -124,4 +124,4 @@ st.subheader(t["list"])
 st.dataframe(st.session_state.data, use_container_width=True)
 
 # --- Calculations ---
-st.subheade
+st.subheader
