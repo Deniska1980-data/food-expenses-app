@@ -23,10 +23,20 @@ This prototype was **tested for functionality**, improved with:
 ---
 
 ### 🖼️ Screenshots
-*Note: Screenshots are illustrative.*
+*Note: Screenshots are illustrative / Obrázky sú ilustračné  
+
+<table>
+<tr>
+<td align="center">🇸🇰🇨🇿 Slovak / Czech version<br><br>
+<img src="screenshot1.JPG" width="400">
+</td>
+<td align="center">🇬🇧 English version<br><br>
+<img src="screenshot.png" width="400">
+</td>
+</tr>
+</table>
 
 ![App Screenshot](screenshot1.JPG)
-
 ---
 
 ### 🧑‍💻 Example code snippet
