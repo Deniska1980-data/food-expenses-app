@@ -41,14 +41,13 @@ exchange_rates = {
 if submitted:
     amount_czk = amount * exchange_rates[currency]
     st.session_state["purchases"].append({
-     date = st.date_input("📅 Date")
-     shop = st.text_input("🛒 Shop")
-     country = st.selectbox("🌍 Country", ["Czechia", "Slovakia", "Croatia", "Other"])
-     currency = st.selectbox("💱 Currency", ["CZK (Czech koruna)", "EUR (Euro)", "USD (US Dollar)", "GBP (British Pound)"])
-     amount = st.number_input("💰 Amount", min_value=0.0, step=0.5)
-     category = st.selectbox("📂 Category", ["Food", "Drugstore", "Transport", "Restaurants & Bars", "Entertainment"])
-     note = st.text_input("📝 Note (e.g. shampoo, beer in bar...)")
-    })
+    date = st.date_input("📅 Date")
+    shop = st.text_input("🏪 Shop")
+    country = st.selectbox("🌍 Country", ["Czechia", "Slovakia", "Croatia", "Other"])
+    currency = st.selectbox("💱 Currency", ["CZK (Czech koruna)", "EUR (Euro)", "USD (US Dollar)", "GBP (British Pound)"])
+    amount = st.number_input("💰 Amount", min_value=0.0, step=0.5)
+    category = st.selectbox("📂 Category", ["Food", "Drugstore", "Transport", "Restaurants & Bars", "Entertainment"])
+    note = st.text_input("📝 Note (e.g. shampoo, beer in bar...)")})
     st.success("✅ Purchase saved!")
 
 # Show purchase list
@@ -70,5 +69,6 @@ if st.session_state["purchases"]:
         entertainment = summary.loc[summary["Category"] == "Entertainment", "Amount (CZK)"].values[0]
         if entertainment / total > 0.3:
             st.warning("⚠️ Warning: You are spending more than 30% on Entertainment.")
+
 
 
