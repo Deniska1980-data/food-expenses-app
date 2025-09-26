@@ -36,7 +36,6 @@ This prototype was **tested for functionality**, improved with:
 </tr>
 </table>
 
-![App Screenshot](screenshot1.JPG)
 ---
 
 ### 🧑‍💻 Example code snippet
