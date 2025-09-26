@@ -17,17 +17,23 @@ if "data" not in st.session_state:
 st.subheader("➕ Add Purchase")
 
 with st.form("input_form"):
-    date = st.date_input("📅 Date", value=dt_date.today())
-    shop = st.text_input("🏪 Shop")
-    country = st.selectbox("🌍 Country", ["Czechia", "Slovakia", "Croatia", "Other"])
-    currency = st.selectbox("💱 Currency", [
-        "CZK (Czech koruna)", 
-        "EUR (Euro)", 
-        "USD (US Dollar)", 
-        "GBP (British Pound)"
-    ])
-    amount = st.number_input("💰 Amount", min_value=0.0, step=0.5)
-    category = st.selectbox("📂 Category", ["Food", "Drugstore", "Transport", "Restaurants & Bars", "Entertainment"])
+    col1, col2 = st.columns(2)
+
+    with col1:
+        date = st.date_input("📅 Date", value=dt_date.today())
+        shop = st.text_input("🏪 Shop")
+        country = st.selectbox("🌍 Country", ["Czechia", "Slovakia", "Croatia", "Other"])
+
+    with col2:
+        currency = st.selectbox("💱 Currency", [
+            "CZK (Czech koruna)", 
+            "EUR (Euro)", 
+            "USD (US Dollar)", 
+            "GBP (British Pound)"
+        ])
+        amount = st.number_input("💰 Amount", min_value=0.0, step=0.5)
+        category = st.selectbox("📂 Category", ["Food", "Drugstore", "Transport", "Restaurants & Bars", "Entertainment"])
+
     note = st.text_input("📝 Note (e.g. shampoo, beer in bar...)")
     submitted = st.form_submit_button("💾 Save purchase")
 
@@ -54,7 +60,7 @@ with st.form("input_form"):
             "Converted_CZK": round(converted, 2)
         }
         st.session_state.data = pd.concat(
-            [st.session_state.data, pd.DataFrame([new_record])], 
+            [st.session_state.data, pd.DataFrame([new_record])],
             ignore_index=True
         )
         st.success("✅ Purchase has been added!")
