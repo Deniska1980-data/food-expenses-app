@@ -58,7 +58,7 @@ This prototype was **tested for functionality** and continuously improved:
 - ✅ Added dual-language labels (Slovak + Czech)  
 - ✅ Retested the app after every change
 
-### Screenshot [![Screenshot](screenshot1.JPG)](screenshot1.JPG)
+### Screenshot [![Screenshot](screenshot1.JPG)]
 
 ### 🧑‍💻 Example code snippet
 ```python
