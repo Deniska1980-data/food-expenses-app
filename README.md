@@ -56,7 +56,9 @@ More categories, features and the final design (elevator-style) will be added st
 This prototype was **tested for functionality** and continuously improved:  
 - ✅ Fixed error messages  
 - ✅ Added dual-language labels (Slovak + Czech)  
-- ✅ Retested the app after every change  
+- ✅ Retested the app after every change
+
+### Screenshot [![Screenshot](screenshot1.JPG)](screenshot1.JPG)
 
 ### 🧑‍💻 Example code snippet
 ```python
