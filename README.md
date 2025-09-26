@@ -3,6 +3,26 @@
 📌 [Open the app on Streamlit](https://food-expenses-app-p5tts7gtpumedcsdkhdlw4.streamlit.app)
 
 ---
+## 🇬🇧 English
+
+### 📌 About the project
+A simple bilingual **expenses tracker prototype** built with **Streamlit**.  
+It helps users **log, analyze and visualize** their daily expenses.  
+
+⚠️ **Note:** This app is still **in development** – it is currently a **prototype**.  
+Only a few basic categories are included for now to test functionality.  
+More categories, features and the final design (elevator-style) will be added step by step.  
+
+- Two language versions: **Slovak/Czech** and **English**  
+- Currency conversion (**CZK** as base)  
+- Categories visualized as **elevator floors with pictograms and text labels**  
+- Friendly and playful UI for children, adults, seniors, and **accessible for visually impaired users**  
+
+### 🛠️ Development notes
+This prototype was **tested for functionality** and continuously improved:  
+- ✅ Fixed error messages  
+- ✅ Added dual-language labels (Slovak + Czech)  
+- ✅ Retested the app after every change
 
 ## ✨ Features / Funkcie
 
@@ -37,27 +57,6 @@
 
 ---
 
-## 🇬🇧 English
-
-### 📌 About the project
-A simple bilingual **expenses tracker prototype** built with **Streamlit**.  
-It helps users **log, analyze and visualize** their daily expenses.  
-
-⚠️ **Note:** This app is still **in development** – it is currently a **prototype**.  
-Only a few basic categories are included for now to test functionality.  
-More categories, features and the final design (elevator-style) will be added step by step.  
-
-- Two language versions: **Slovak/Czech** and **English**  
-- Currency conversion (**CZK** as base)  
-- Categories visualized as **elevator floors with pictograms and text labels**  
-- Friendly and playful UI for children, adults, seniors, and **accessible for visually impaired users**  
-
-### 🛠️ Development notes
-This prototype was **tested for functionality** and continuously improved:  
-- ✅ Fixed error messages  
-- ✅ Added dual-language labels (Slovak + Czech)  
-- ✅ Retested the app after every change
-
 ## 🖼 Screenshots  
 > Note: Screenshots are illustrative / Obrázky sú ilustračné  
 <td align="center"> SK Slovak / CZ Czech version<br><br>
@@ -65,14 +64,6 @@ This prototype was **tested for functionality** and continuously improved:
 </td>
 <table>
 <tr>
-
-### 🧑‍💻 Example code snippet
-```python
-import streamlit as st
-import pandas as pd
-from datetime import date as dt_date
-
----
 
 ### 🚀 How to run locally
 1. Clone this repository
@@ -83,6 +74,13 @@ pip install -r requirements.txt
 3. Run Streamlit app
 streamlit run app.py
 
+### 🧑‍💻 Example code snippet
+```python
+import streamlit as st
+import pandas as pd
+from datetime import date as dt_date
+
+---
 
 ### 🇸🇰 Slovenská / CZ Česká verzia
 📌 O projekte
