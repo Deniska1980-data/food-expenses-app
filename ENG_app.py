@@ -54,10 +54,10 @@ if submitted:
     st.success("✅ Purchase saved!")
 
 # Show purchase list
-if st.session_state["purchases"]:
-    st.subheader("📋 Purchase List")
-    df = pd.DataFrame(st.session_state["purchases"])
-    st.dataframe(df)
+# --- Initialize dataframe in session state ---
+if "purchases" not in st.session_state:
+    st.session_state["purchases"] = pd.DataFrame(columns=[
+        "Date", "Shop", "Country", "Currency", "Amount", "Category", "Note", "Amount (CZK)"])
 
     # Monthly summary by category
     st.subheader("📊 Monthly Expense Summary")
@@ -72,6 +72,7 @@ if st.session_state["purchases"]:
         entertainment = summary.loc[summary["Category"] == "Entertainment", "Amount (CZK)"].values[0]
         if entertainment / total > 0.3:
             st.warning("⚠️ Warning: You are spending more than 30% on Entertainment.")
+
 
 
 
