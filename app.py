@@ -5,7 +5,7 @@ from datetime import date as dt_date
 st.set_page_config(page_title="Výdavkový denník", layout="centered")
 
 # --- Language Switch (top right) ---
-col1, col2 = st.columns([8,1])
+col1, col2 = st.columns([8, 1])
 with col2:
     lang = st.selectbox("Language", ["🇸🇰 SK (CZK)", "🇬🇧 ENG"], label_visibility="collapsed")
 
@@ -124,4 +124,25 @@ st.subheader(t["list"])
 st.dataframe(st.session_state.data, use_container_width=True)
 
 # --- Calculations ---
-st.subheader
+st.subheader(t["summary"])
+
+data = st.session_state.data
+
+if not data.empty:
+    total_sum = data["Converted_CZK"].sum()
+    category_summary = data.groupby("Category")["Converted_CZK"].sum()
+
+    for cat, amt in category_summary.items():
+        st.markdown(f"**{cat}:** {amt:.2f} CZK")
+
+    st.markdown(f"### {t['total']}: {total_sum:.2f} CZK")
+
+    # --- Educational Tip ---
+    top_category = category_summary.idxmax()
+    percent = category_summary[top_category] / total_sum * 100
+    if (top_category in ["Zábava", "Entertainment"]) and percent > 30:
+        st.warning(t["tip_high"])
+    else:
+        st.info(t["tip_info"].format(cat=top_category, pct=percent))
+else:
+    st.info(t["empty"])
