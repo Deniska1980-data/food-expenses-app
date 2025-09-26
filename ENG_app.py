@@ -17,7 +17,7 @@ with st.form("purchase_form", clear_on_submit=True):
     with col1:
         purchase_date = st.date_input("Date", value=date.today())
         shop = st.text_input("Shop")
-        country = st.text_input("Country")
+        country = st.selectbox("Country", ["Czechia", "Slovakia", "Croatia", "Other"])
         category = st.selectbox(
             "Category",
             ["Food", "Groceries", "Transport", "Restaurants & Bars", "Entertainment"]
@@ -71,3 +71,4 @@ if st.session_state["purchases"]:
         entertainment = summary.loc[summary["Category"] == "Entertainment", "Amount (CZK)"].values[0]
         if entertainment / total > 0.3:
             st.warning("⚠️ Warning: You are spending more than 30% on Entertainment.")
+
