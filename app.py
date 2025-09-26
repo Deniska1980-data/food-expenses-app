@@ -146,3 +146,4 @@ if not data.empty:
         st.info(t["tip_info"].format(cat=top_category, pct=percent))
 else:
     st.info(t["empty"])
+
