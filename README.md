@@ -22,7 +22,10 @@ More categories, features and the final design (elevator-style) will be added st
 This prototype was **tested for functionality** and continuously improved:  
 - ✅ Fixed error messages  
 - ✅ Added dual-language labels (Slovak + Czech)  
-- ✅ Retested the app after every change
+- ✅ Retested the app after every change  
+- ✅ Prototype tested on multiple devices (mobile + notebook)  
+- ✅ Shared app link – confirmed working by other users  
+- ✅ First positive user feedback received  
 
 ## ✨ Features / Funkcie
 
