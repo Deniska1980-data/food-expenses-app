@@ -25,7 +25,8 @@ This prototype was **tested for functionality** and continuously improved:
 - ✅ Retested the app after every change  
 - ✅ Prototype tested on multiple devices (mobile + notebook)  
 - ✅ Shared app link – confirmed working by other users  
-- ✅ First positive user feedback received  
+- ✅ First positive user feedback received
+- ✅ The app has been tested and confirmed to work in both Czech and Slovak (CZ/SK) environments by real user
 
 ## ✨ Features / Funkcie
 
@@ -113,7 +114,7 @@ Tento prototyp bol testovaný z hľadiska funkčnosti a postupne vylepšovaný:
 ✅ Po každej úprave som aplikáciu znovu testovala
 ✅ Prototyp testovaný na viacerých zariadeniach (mobil + notebook)
 ✅ Zdieľaný odkaz – potvrdené, že appka funguje aj u iných používateľov
-✅ Prvá pozitívna spätná väzba od používateľov
+✅ Prvá pozitívna spätná väzba od používateľov v ČR i na Slovensku (testuji reální lidé)
 
 ### 🧑‍💻 Ukážka kódu
 import streamlit as st
