@@ -2,11 +2,12 @@ import streamlit as st
 import pandas as pd
 from datetime import date as dt_date, timedelta
 import requests
+import matplotlib.pyplot as plt
 
-st.set_page_config(page_title="Výdavkový denník – CZK + CNB TXT feed", layout="centered")
+st.set_page_config(page_title="Výdavkový denník – CNB feed", layout="centered")
 
 # =====================================
-# Pomocné funkcie
+# Pomocné funkcie – CNB TXT feed
 # =====================================
 CNB_TXT = "https://www.cnb.cz/cs/financni-trhy/devizovy-trh/kurzy-devizoveho-trhu/kurzy-devizoveho-trhu/denni_kurz.txt"
 
@@ -14,7 +15,7 @@ def fmt_cz(d: dt_date) -> str:
     return d.strftime("%d.%m.%Y")
 
 def fetch_cnb_rate(for_date: dt_date, code: str, max_back_days: int = 10):
-    """Načíta kurz z CNB TXT feedu podľa kódu meny."""
+    """Načíta kurz z CNB TXT feedu podľa kódu meny s fallbackom."""
     check_date = for_date
     for _ in range(max_back_days + 1):
         url = f"{CNB_TXT}?date={fmt_cz(check_date)}"
@@ -39,44 +40,92 @@ def fetch_cnb_rate(for_date: dt_date, code: str, max_back_days: int = 10):
     return None, None
 
 # =====================================
-# Krajiny a meny podľa CNB feedu (26.09.2025)
+# Krajiny a meny (CZK = 1:1, ostatné podľa CNB feedu)
 # =====================================
 COUNTRY_OPTIONS = {
-    "Česko / Czechia – CZK Kč": "CZK",   # manuálne 1:1
-    "Austrália – AUD $": "AUD",
-    "Brazília – BRL R$": "BRL",
-    "Bulharsko – BGN лв": "BGN",
-    "Čína – CNY ¥": "CNY",
-    "Dánsko – DKK kr": "DKK",
+    "Česko / Czechia – CZK Kč": "CZK",
     "Eurozóna – EUR €": "EUR",
+    "USA – USD $": "USD",
+    "Veľká Británia – GBP £": "GBP",
+    "Švajčiarsko – CHF Fr.": "CHF",
+    "Poľsko – PLN zł": "PLN",
+    "Maďarsko – HUF Ft": "HUF",
+    "Nórsko – NOK kr": "NOK",
+    "Dánsko – DKK kr": "DKK",
+    "Švédsko – SEK kr": "SEK",
+    "Kanada – CAD $": "CAD",
+    "Austrália – AUD $": "AUD",
+    "Nový Zéland – NZD $": "NZD",
+    "Japonsko – JPY ¥": "JPY",
+    "Čína – CNY ¥": "CNY",
+    "India – INR ₹": "INR",
+    "Brazília – BRL R$": "BRL",
+    "Mexiko – MXN $": "MXN",
+    "Južná Afrika – ZAR R": "ZAR",
+    "Čile – CLP $": "CLP",
+    "Turecko – TRY ₺": "TRY",
+    "Izrael – ILS ₪": "ILS",
+    "Maroko – MAD د.م.": "MAD",
+    "Keňa – KES Sh": "KES",
+    "Gruzínsko – GEL ₾": "GEL",
+    "Arménsko – AMD ֏": "AMD",
     "Filipíny – PHP ₱": "PHP",
     "Hongkong – HKD $": "HKD",
-    "India – INR ₹": "INR",
-    "Indonézia – IDR Rp": "IDR",
-    "Island – ISK kr": "ISK",
-    "Izrael – ILS ₪": "ILS",
-    "Japonsko – JPY ¥": "JPY",
-    "Južná Afrika – ZAR R": "ZAR",
-    "Kanada – CAD $": "CAD",
-    "Kórea – KRW ₩": "KRW",
-    "Maďarsko – HUF Ft": "HUF",
-    "Malajzia – MYR RM": "MYR",
-    "Mexiko – MXN $": "MXN",
-    "MMF – XDR": "XDR",
-    "Nórsko – NOK kr": "NOK",
-    "Nový Zéland – NZD $": "NZD",
-    "Poľsko – PLN zł": "PLN",
-    "Rumunsko – RON lei": "RON",
     "Singapur – SGD $": "SGD",
-    "Švédsko – SEK kr": "SEK",
-    "Švajčiarsko – CHF Fr.": "CHF",
-    "Thajsko – THB ฿": "THB",
-    "Turecko – TRY ₺": "TRY",
-    "USA – USD $": "USD",
-    "Veľká Británia – GBP £": "GBP"
+    "Kórea – KRW ₩": "KRW",
+    "Island – ISK kr": "ISK",
+    "Rumunsko – RON lei": "RON",
+    "Indonézia – IDR Rp": "IDR"
 }
 
-CATEGORIES = ["Potraviny", "Drogérie", "Doprava", "Reštaurácie a bary", "Zábava"]
+# =====================================
+# Kategórie s piktogramami + limity
+# =====================================
+CATEGORIES = [
+    "Potraviny 🛒",
+    "Drogérie 🧴",
+    "Doprava 🚌",
+    "Reštaurácie a bary 🍽️",
+    "Zábava 🎉",
+    "Odevy 👕",
+    "Obuv 👟",
+    "Elektronika 💻",
+    "Domácnosť / nábytok 🛋️",
+    "Šport a voľný čas 🏀",
+    "Zdravie a lekáreň 💊",
+    "Cestovanie / dovolenka ✈️",
+    "Vzdelávanie / kurzy 📚"
+]
+
+LIMITS = {
+    "Potraviny 🛒": 6000,
+    "Zábava 🎉": 2000,
+    "Elektronika 💻": 10000,
+    "Cestovanie / dovolenka ✈️": 20000
+}
+
+MESSAGES = {
+    "Potraviny 🛒": "Pozor! Zdá sa, že doma zakladáš menší supermarket 🛒. Už si minul viac než 6000 Kč na potraviny!",
+    "Zábava 🎉": "💡 Poučná rada: zábava je fajn, ale mysli aj na úspory. Na zábavu si už minul viac než 2000 Kč.",
+    "Elektronika 💻": "Ups... 💻 To už je skoro nový notebook! Elektronika ťa vyšla cez 10 000 Kč.",
+    "Cestovanie / dovolenka ✈️": "✈️ Haló cestovateľ! Vyzerá to, že už máš zakúpenú letenku na Mars – výdavky na cestovanie prekročili 20 000 Kč."
+}
+
+CATEGORY_COLORS = {
+    "Potraviny 🛒": "orange",
+    "Drogérie 🧴": "blue",
+    "Doprava 🚌": "green",
+    "Reštaurácie a bary 🍽️": "purple",
+    "Zábava 🎉": "red",
+    "Odevy 👕": "saddlebrown",
+    "Obuv 👟": "navy",
+    "Elektronika 💻": "gray",
+    "Domácnosť / nábytok 🛋️": "tan",
+    "Šport a voľný čas 🏀": "turquoise",
+    "Zdravie a lekáreň 💊": "pink",
+    "Cestovanie / dovolenka ✈️": "gold",
+    "Vzdelávanie / kurzy 📚": "darkgreen"
+}
 
 # =====================================
 # Session state
@@ -90,8 +139,7 @@ if "data" not in st.session_state:
 # =====================================
 # UI
 # =====================================
-st.title("💸 Výdavkový denník – CZK + CNB TXT feed")
-st.caption("CZK = 1:1. Ostatné meny podľa denného kurzového lístka ČNB. Ak nie je kurz dostupný, použije sa posledný známy.")
+st.title("💸 Výdavkový denník – CNB TXT feed")
 
 with st.form("input_form"):
     col1, col2 = st.columns(2)
@@ -137,16 +185,47 @@ with st.form("input_form"):
             st.error(f"❌ Kurz pre {currency_code} sa nepodarilo načítať.")
 
 # =====================================
-# Výpis dát
+# Výpis dát + súhrn
 # =====================================
 st.subheader("📊 Zoznam nákupov")
 st.dataframe(st.session_state.data, use_container_width=True)
 
 if not st.session_state.data.empty:
-    st.subheader("📈 Súhrn")
-    total = st.session_state.data["Converted_CZK"].sum()
-    st.markdown(f"💰 Celkové výdavky: **{total:.2f} CZK**")
+    st.subheader("📈 Súhrn mesačných výdavkov")
+    monthly_summary = st.session_state.data.groupby("Category")["Converted_CZK"].sum()
 
-st.caption("ℹ️ Kurzy ČNB sa vyhlasujú pracovné dni po 14:30. "
+    for cat, total in monthly_summary.items():
+        st.markdown(f"**{cat}:** {total:.2f} CZK")
+        if cat in LIMITS and total > LIMITS[cat]:
+            st.error(MESSAGES[cat])
+
+    grand_total = monthly_summary.sum()
+    st.markdown(f"💰 Celkové výdavky: **{grand_total:.2f} CZK**")
+
+    # =====================================
+    # Vizualizácia – stĺpcový graf
+    # =====================================
+    st.subheader("📊 Vizualizácia výdavkov podľa kategórií")
+
+    colors = [CATEGORY_COLORS.get(cat, "lightgray") for cat in monthly_summary.index]
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+    bars = ax.bar(monthly_summary.index, monthly_summary.values, color=colors)
+
+    ax.set_ylabel("Výdavky (CZK)")
+    ax.set_title("Výdavky podľa kategórií")
+    plt.xticks(rotation=45, ha="right")
+
+    for bar in bars:
+        height = bar.get_height()
+        ax.annotate(f'{height:.0f} Kč',
+                    xy=(bar.get_x() + bar.get_width() / 2, height),
+                    xytext=(0, 3),
+                    textcoords="offset points",
+                    ha="center", va="bottom")
+
+    st.pyplot(fig)
+
+st.caption("ℹ️ CZK = 1:1, ostatné meny podľa denného kurzového lístka ČNB. "
+           "Kurzy sa vyhlasujú každý pracovný deň po 14:30. "
            "Ak pre zvolený dátum nie je kurz dostupný (víkend/sviatok), použije sa posledný dostupný kurz.")
-
