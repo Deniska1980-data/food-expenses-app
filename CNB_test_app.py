@@ -1,53 +1,65 @@
 import streamlit as st
 import pandas as pd
-import requests
 from datetime import date as dt_date, timedelta
+import requests
 
-# --- Nastavenie aplikácie ---
+# --- Nastavenie stránky ---
 st.set_page_config(page_title="Výdavkový denník", layout="centered")
 
 # --- Funkcia na získanie kurzu z ČNB ---
-def get_cnb_rate(currency_code: str, purchase_date: dt_date):
-    """Vracia kurz pre danú menu a dátum, alebo posledný dostupný kurz pred týmto dátumom."""
-    check_date = purchase_date
+def get_cnb_rate(code, chosen_date):
+    """Načíta kurz z ČNB API pre daný dátum a menu.
+       Ak kurz nie je dostupný, použije posledný dostupný deň pred týmto dátumom."""
+    base_url = "https://api.cnb.cz/cnbapi/exrates/daily"
+    check_date = chosen_date
+
     for _ in range(7):  # max. 7 dní späť
-        url = f"https://api.cnb.cz/cnbapi/exrates/daily?date={check_date}"
+        url = f"{base_url}?date={check_date.isoformat()}"
         try:
-            response = requests.get(url)
-            data = response.json()
-            rates = data.get("rates", [])
-            if rates:
-                for r in rates:
-                    if r["code"] == currency_code:
-                        # kurz sa počíta: kurz / množství
-                        rate = float(r["rate"].replace(",", ".")) / int(r["amount"])
-                        return rate, check_date
-        except Exception as e:
-            st.error(f"Chyba pri načítaní kurzov: {e}")
-            return None, None
-        # ak nenájdené → posuň deň späť
+            resp = requests.get(url, timeout=10)
+            if resp.status_code == 200:
+                data = resp.json()
+                rates = data.get("rates", [])
+                if rates:
+                    for r in rates:
+                        if r["code"] == code:
+                            rate = float(r["rate"].replace(",", "."))
+                            amount = int(r["amount"])
+                            return rate / amount, check_date
+        except Exception:
+            pass
+        # ak nenájdeme, posunieme sa o deň späť
         check_date -= timedelta(days=1)
+
     return None, None
 
-# --- Preddefinované meny a krajiny ---
-currencies = {
-    "CZK (Česká koruna)": "CZK",
-    "EUR (Euro)": "EUR",
-    "USD (US Dollar)": "USD",
-    "GBP (British Pound)": "GBP",
-    "CHF (Swiss Franc)": "CHF",
-    "PLN (Polish Zloty)": "PLN",
-    "HUF (Hungarian Forint)": "HUF"
+# --- Mapovanie krajín na meny ---
+country_currency_map = {
+    "Česko / Czechia": "CZK",
+    "Nemecko / Germany": "EUR",
+    "Francúzsko / France": "EUR",
+    "Taliansko / Italy": "EUR",
+    "Španielsko / Spain": "EUR",
+    "Grécko / Greece": "EUR",
+    "Slovensko / Slovakia": "EUR",
+    "Chorvátsko / Croatia": "EUR",
+    "Holandsko / Netherlands": "EUR",
+    "Belgicko / Belgium": "EUR",
+    "Fínsko / Finland": "EUR",
+    "Írsko / Ireland": "EUR",
+    "Portugalsko / Portugal": "EUR",
+    "Luxembursko": "EUR",
+    "Estónsko / Estonia": "EUR",
+    "Lotyšsko / Latvia": "EUR",
+    "Litva / Lithuania": "EUR",
+    "Slovinsko / Slovenia": "EUR",
+    "Cyprus": "EUR",
+    "Malta": "EUR"
 }
-countries = [
-    "Česko / Czechia", "Slovensko / Slovakia", "Nemecko / Germany",
-    "Rakúsko / Austria", "Poľsko / Poland", "Maďarsko / Hungary",
-    "Veľká Británia / United Kingdom", "Švajčiarsko / Switzerland",
-    "Iné / Other"
-]
+
 categories = ["Potraviny", "Drogérie", "Doprava", "Reštaurácie a bary", "Zábava"]
 
-# --- Inicializácia session_state ---
+# --- Inicializácia dát ---
 if "data" not in st.session_state:
     st.session_state.data = pd.DataFrame(columns=[
         "Date", "Shop", "Country", "Currency", "Amount",
@@ -55,30 +67,30 @@ if "data" not in st.session_state:
     ])
 
 # --- UI ---
-st.title("💸 Môj mesačný výdavkový denník („Výdejový deník“)")
-st.markdown("Zaznamenaj si svoje nákupy a výdavky – vždy s aktuálnym kurzom ČNB ☀️")
+st.title("💸 Môj mesačný výdavkový denník – test verzia CZK + EUR")
+st.markdown("Zaznamenaj si nákupy v CZK alebo EUR – prepočítané podľa kurzov ČNB ☀️")
 
-st.subheader("➕ Pridať nákup / Přidat nákup")
+st.subheader("➕ Pridať nákup")
 
 with st.form("input_form"):
     col1, col2 = st.columns(2)
 
     with col1:
-        purchase_date = st.date_input("📅 Dátum nákupu / Datum nákupu", value=dt_date.today(),
-                                      min_value=dt_date(2024, 1, 1))
+        purchase_date = st.date_input("📅 Dátum nákupu", value=dt_date.today())
         shop = st.text_input("🏪 Obchod / miesto")
-        country = st.selectbox("🌍 Krajina / Krajina", countries)
+        country = st.selectbox("🌍 Krajina", list(country_currency_map.keys()))
 
     with col2:
-        currency_name = st.selectbox("💱 Mena / Měna", list(currencies.keys()))
-        amount = st.number_input("💰 Suma / Suma", min_value=0.0, step=0.5)
-        category = st.selectbox("📂 Kategória / Kategorie", categories)
+        amount = st.number_input("💰 Suma", min_value=0.0, step=0.5)
+        category = st.selectbox("📂 Kategória", categories)
 
     note = st.text_input("📝 Poznámka")
-    submitted = st.form_submit_button("💾 Uložiť nákup / Uložit nákup")
+    submitted = st.form_submit_button("💾 Uložiť nákup")
 
     if submitted:
-        code = currencies[currency_name]
+        code = country_currency_map[country]
+
+        # CZK = 1:1
         if code == "CZK":
             rate, rate_date = 1.0, purchase_date
         else:
@@ -101,20 +113,22 @@ with st.form("input_form"):
                 [st.session_state.data, pd.DataFrame([new_record])],
                 ignore_index=True
             )
-            st.success("✅ Nákup bol pridaný! / Nákup byl přidán!")
+            st.success(f"✅ Nákup pridaný! Prepočet: {converted} CZK (kurz z {rate_date})")
         else:
             st.error("❌ Kurz pre danú menu sa nepodarilo načítať.")
 
-# --- Info o kurzoch ---
-st.caption("ℹ️ Kurzy ČNB sa vyhlasujú každý pracovný deň o 14:30. "
-           "Ak pre zvolený dátum ešte nie sú k dispozícii (víkend/sviatok), použije sa posledný dostupný kurz.")
-
-# --- Zoznam nákupov ---
-st.subheader("📊 Zoznam nákupov / Seznam nákupů")
+# --- Zobrazenie dát ---
+st.subheader("📊 Zoznam nákupov")
 st.dataframe(st.session_state.data, use_container_width=True)
 
 # --- Súhrn ---
 if not st.session_state.data.empty:
-    st.subheader("📈 Súhrn mesačných výdavkov / Souhrn měsíčních výdajů")
+    st.subheader("📈 Súhrn výdavkov")
     total = st.session_state.data["Converted_CZK"].sum()
     st.markdown(f"💰 Celkové výdavky: **{total:.2f} CZK**")
+
+# --- Info ---
+st.caption("ℹ️ Kurzy ČNB sa vyhlasujú každý pracovný deň o 14:30. "
+           "Ak pre zvolený dátum nie sú k dispozícii (víkend/sviatok), "
+           "použije sa posledný dostupný kurz.")
+
