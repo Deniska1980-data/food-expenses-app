@@ -118,5 +118,3 @@ if not st.session_state.data.empty:
     st.subheader("📈 Súhrn mesačných výdavkov / Souhrn měsíčních výdajů")
     total = st.session_state.data["Converted_CZK"].sum()
     st.markdown(f"💰 Celkové výdavky: **{total:.2f} CZK**")
-
-
