@@ -3,34 +3,9 @@ import pandas as pd
 from datetime import date as dt_date
 import requests
 
-# -------------------------------
-# Funkcia: Načítanie kurzov z ČNB
-# -------------------------------
-def get_exchange_rates():
-    url = "https://api.cnb.cz/cnbapi/exrates/daily"
-    try:
-        response = requests.get(url)
-        data = response.json()
-        
-        rates = {}
-        for item in data["rates"]:
-            code = item.get("code") or item.get("currencyCode")
-            rate = float(item["rate"])
-            amount = float(item["amount"])
-            rates[code] = rate / amount  # kurz za 1 jednotku meny
-        rates["CZK"] = 1.0
-        return rates
-
-    except Exception as e:
-        st.error(f"Chyba pri načítaní kurzov ČNB: {e}")
-        return {"CZK": 1.0, "EUR": 25.0, "USD": 23.0, "GBP": 29.0}
-
-# -------------------------------
-# Nastavenie aplikácie
-# -------------------------------
 st.set_page_config(page_title="Výdavkový denník", layout="centered")
 
-# Prepínač jazykov
+# --- Language Switch ---
 col1, col2 = st.columns([8, 2])
 with col2:
     lang = st.radio(
@@ -40,7 +15,7 @@ with col2:
         horizontal=False
     )
 
-# Texty – SK/CZ verzia
+# --- Slovak & Czech texts ---
 texts_sk = {
     "title": "💸 Môj mesačný výdavkový denník („Výdejový deník“)",
     "intro": "Zaznamenaj si svoje nákupy a výdavky – nech máš prehľad, aj keď si na dovolenke ☀️ / "
@@ -72,7 +47,7 @@ texts_sk = {
                    "Reštaurácie a bary / Restaurace a bary", "Zábava / Zábava"]
 }
 
-# Texty – EN verzia
+# --- English texts ---
 texts_en = {
     "title": "💸 My Monthly Expense Diary",
     "intro": "Record your purchases and expenses – keep track, even on vacation ☀️",
@@ -98,27 +73,28 @@ texts_en = {
     "categories": ["Food", "Drugstore", "Transport", "Restaurants & Bars", "Entertainment"]
 }
 
-# Výber jazyka
+# --- Choose language ---
 t = texts_sk if lang.startswith("🇸🇰") else texts_en
 
-# Inicializácia dát
+# --- Initialize DataFrame ---
 if "data" not in st.session_state:
     st.session_state.data = pd.DataFrame(columns=[
         "Date", "Shop", "Country", "Currency", "Amount", "Category", "Note", "Converted_CZK"
     ])
 
-# Nadpis a úvod
+# --- Title and Intro ---
 st.title(t["title"])
 st.markdown(t["intro"])
 
-# Formulár pre zadanie nákupu
+# --- Input Form ---
 st.subheader(t["add"])
 
 with st.form("input_form"):
     col1, col2 = st.columns(2)
 
     with col1:
-        date = st.date_input(t["date"], value=dt_date.today())
+        min_date = dt_date(2024, 1, 1)
+        date = st.date_input(t["date"], value=dt_date.today(), min_value=min_date)
         shop = st.text_input(t["shop"])
         country = st.selectbox(t["country"], t["countries"])
 
@@ -131,11 +107,23 @@ with st.form("input_form"):
     submitted = st.form_submit_button(t["save"])
 
     if submitted:
-        # načítame kurzy ČNB
-        rates = get_exchange_rates()
-        rate = rates.get(currency.split()[0], 1.0)  # vezmeme kód meny
-        converted = amount * rate
+        # --- Get exchange rate from CNB API ---
+        rate = 1.0
+        if currency != "CZK":
+            try:
+                url = f"https://api.cnb.cz/cnbapi/exrates/daily?date={date.strftime('%Y-%m-%d')}"
+                response = requests.get(url)
+                data = response.json()
 
+                # vyhľadať záznam podľa kódu meny
+                for r in data["rates"]:
+                    if r["code"] == currency:
+                        rate = float(r["rate"]) / float(r["amount"])
+                        break
+            except Exception as e:
+                st.error(f"Chyba pri načítaní kurzu ČNB: {e}")
+
+        converted = amount * rate
         new_record = {
             "Date": date,
             "Shop": shop,
@@ -152,12 +140,13 @@ with st.form("input_form"):
         )
         st.success(t["added"])
 
-# Zoznam nákupov
+# --- Display Table ---
 st.subheader(t["list"])
 st.dataframe(st.session_state.data, use_container_width=True)
 
-# Súhrn
+# --- Calculations ---
 st.subheader(t["summary"])
+
 data = st.session_state.data
 
 if not data.empty:
@@ -169,6 +158,7 @@ if not data.empty:
 
     st.markdown(f"### {t['total']}: {total_sum:.2f} CZK")
 
+    # --- Educational Tip ---
     top_category = category_summary.idxmax()
     percent = category_summary[top_category] / total_sum * 100
     if (top_category in ["Zábava / Zábava", "Entertainment"]) and percent > 30:
