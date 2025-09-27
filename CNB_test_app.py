@@ -2,6 +2,24 @@ import streamlit as st
 import pandas as pd
 from datetime import date as dt_date
 
+import requests
+st.subheader("💱 Aktuálne kurzy ČNB")
+
+# URL API ČNB – denné kurzy
+url = "https://api.cnb.cz/cnbapi/exrates/daily"
+
+try:
+    response = requests.get(url)
+    data = response.json()
+
+    # prevedieme na DataFrame pre pekné zobrazenie
+    rates = pd.DataFrame(data["rates"])
+    st.dataframe(rates)
+
+except Exception as e:
+    st.error(f"Chyba pri načítaní kurzov: {e}")
+
+
 st.set_page_config(page_title="Výdavkový denník", layout="centered")
 
 # --- Language Switch (top right with flags) ---
