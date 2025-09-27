@@ -1,26 +1,24 @@
 import streamlit as st
 import pandas as pd
 from datetime import date as dt_date
-
 import requests
-st.subheader("💱 Aktuálne kurzy ČNB")
-
-# URL API ČNB – denné kurzy
-url = "https://api.cnb.cz/cnbapi/exrates/daily"
-
-try:
-    response = requests.get(url)
-    data = response.json()
-
-    # prevedieme na DataFrame pre pekné zobrazenie
-    rates = pd.DataFrame(data["rates"])
-    st.dataframe(rates)
-
-except Exception as e:
-    st.error(f"Chyba pri načítaní kurzov: {e}")
-
 
 st.set_page_config(page_title="Výdavkový denník", layout="centered")
+
+# --- Načítanie kurzov z ČNB API (len na pozadí) ---
+def get_exchange_rates():
+    url = "https://api.cnb.cz/cnbapi/exrates/daily"
+    try:
+        response = requests.get(url)
+        data = response.json()
+        rates = {item["code"]: float(item["rate"]) / float(item["amount"]) for item in data["rates"]}
+        rates["CZK"] = 1.0  # česká koruna ako základ
+        return rates
+    except Exception as e:
+        st.error(f"Chyba pri načítaní kurzov ČNB: {e}")
+        return {"CZK": 1.0, "EUR": 25.0, "USD": 23.0, "GBP": 29.0}  # fallback kurzy
+
+exchange_rates = get_exchange_rates()
 
 # --- Language Switch (top right with flags) ---
 col1, col2 = st.columns([8, 2])
@@ -59,7 +57,7 @@ texts_sk = {
     "empty": "Zatiaľ nemáš žiadne nákupy. Pridaj aspoň jeden a uvidíš svoje dáta ✨ / "
              "Zatím nemáš žádné nákupy. Přidej alespoň jeden a uvidíš svá data ✨",
     "countries": ["Slovensko / Slovensko", "Česko / Česko", "Chorvátsko / Chorvatsko", "Iné / Jiné"],
-    "currencies": ["CZK (Kč)", "EUR (€)", "USD ($)", "GBP (£)"],
+    "currencies": ["CZK", "EUR", "USD", "GBP"],
     "categories": ["Potraviny / Potraviny", "Drogérie / Drogérie", "Doprava / Doprava", 
                    "Reštaurácie a bary / Restaurace a bary", "Zábava / Zábava"]
 }
@@ -86,7 +84,7 @@ texts_en = {
     "tip_info": "Most of your spending went to _{cat}_ ({pct:.1f}% of total expenses).",
     "empty": "No purchases yet. Add at least one to see your data ✨",
     "countries": ["Slovakia", "Czechia", "Croatia", "Other"],
-    "currencies": ["CZK (Czech koruna)", "EUR (Euro)", "USD (US Dollar)", "GBP (British Pound)"],
+    "currencies": ["CZK", "EUR", "USD", "GBP"],
     "categories": ["Food", "Drugstore", "Transport", "Restaurants & Bars", "Entertainment"]
 }
 
@@ -122,18 +120,11 @@ with st.form("input_form"):
     note = st.text_input(t["note"])
     submitted = st.form_submit_button(t["save"])
 
-    # 🔹 Temporary fixed exchange rates (later: CNB API)
-    if currency.startswith("EUR") or currency == "€":
-        rate = 25.0
-    elif currency.startswith("USD") or currency == "$":
-        rate = 20.0
-    elif currency.startswith("GBP") or currency == "£":
-        rate = 30.0
-    else:
-        rate = 1.0
-
     if submitted:
+        # prepočet podľa aktuálneho kurzu ČNB
+        rate = exchange_rates.get(currency.split()[0], 1.0)
         converted = amount * rate
+
         new_record = {
             "Date": date,
             "Shop": shop,
@@ -176,4 +167,4 @@ if not data.empty:
     else:
         st.info(t["tip_info"].format(cat=top_category, pct=percent))
 else:
-      st.info(t["empty"])
+    st.info(t["empty"])
