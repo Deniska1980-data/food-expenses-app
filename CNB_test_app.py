@@ -190,4 +190,3 @@ else:
     ).properties(width=700, height=450)
 
     st.altair_chart(chart, use_container_width=True)
-
