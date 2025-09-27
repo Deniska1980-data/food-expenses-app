@@ -4,189 +4,174 @@ import requests
 import datetime
 import altair as alt
 
-# -------------------------------
-# Funkcia pre CZK 1:1 a ostatné meny z CNB TXT feed
-# -------------------------------
-def get_cnb_rates(date: str):
-    url = f"https://www.cnb.cz/cs/financni-trhy/devizovy-trh/kurzy-devizoveho-trhu/kurzy-devizoveho-trhu/denni_kurz.txt?date={date}"
+# -----------------------
+# Pomocné funkcie
+# -----------------------
+
+def get_czk_rate(date):
+    """CZK = vždy 1:1"""
+    return 1.0, date.strftime("%Y-%m-%d")
+
+def get_currency_rate(date, currency_code):
+    """Načíta kurz z denného TXT feedu ČNB pre danú menu"""
+    url = f"https://www.cnb.cz/cs/financni-trhy/devizovy-trh/kurzy-devizoveho-trhu/denni_kurz.txt?date={date.strftime('%d.%m.%Y')}"
     try:
-        response = requests.get(url)
-        if response.status_code != 200:
-            return None
-        data = response.text.split("\n")
-        rates = {}
-        for row in data[2:]:
-            if row.strip():
-                parts = row.split("|")
-                if len(parts) == 5:
-                    country, currency, amount, code, rate = parts
-                    try:
-                        rates[code] = float(rate.replace(",", ".")) / float(amount)
-                    except:
-                        continue
-        return rates
-    except Exception:
-        return None
+        r = requests.get(url)
+        r.encoding = "utf-8"
+        lines = r.text.split("\n")
+        for line in lines[2:]:
+            parts = line.split("|")
+            if len(parts) >= 5:
+                kod = parts[3].strip()
+                kurz = parts[4].replace(",", ".").strip()
+                mnozstvi = parts[2].strip()
+                if kod == currency_code:
+                    rate = float(kurz) / float(mnozstvi)
+                    return rate, date.strftime("%Y-%m-%d")
+    except Exception as e:
+        st.error(f"Chyba pri načítaní kurzu: {e}")
+    return None, None
 
-# -------------------------------
-# Kategórie + prístupné farby
-# -------------------------------
+# -----------------------
+# Konfigurácia kategórií a farieb
+# -----------------------
+
 categories = {
-    "Potraviny 🛒": "#FFA500",          # oranžová
-    "Drogérie 🧴": "#1E90FF",          # modrá
-    "Doprava 🚌": "#2E8B57",           # zelená
-    "Reštaurácie a bary 🍽️": "#8A2BE2", # fialová
-    "Zábava 🎉": "#DC143C",            # červená
-    "Odevy 👕": "#20B2AA",             # tyrkysová
-    "Obuv 👟": "#FFD700",              # žltá
-    "Elektronika 💻": "#708090",       # sivá
-    "Domácnosť / nábytok 🛋️": "#8B4513", # hnedá
-    "Šport a voľný čas 🏀": "#32CD32", # svetlozelená
-    "Zdravie a lekáreň 💊": "#FF69B4", # ružová
-    "Cestovanie / dovolenka ✈️": "#00CED1", # tyrkysovo-modrá
-    "Vzdelávanie / kurzy 📚": "#4169E1" # tmavomodrá
+    "Potraviny 🛒": "orange",
+    "Drogérie 🧴": "blue",
+    "Doprava 🚗": "green",
+    "Reštaurácie a bary 🍽️": "purple",
+    "Zábava 🎉": "red",
+    "Odevy 👕": "teal",
+    "Obuv 👟": "brown",
+    "Elektronika 💻": "gray",
+    "Domácnosť / nábytok 🛋️": "pink",
+    "Šport a voľný čas 🏀": "olive",
+    "Zdravie a lekáreň 💊": "cyan",
+    "Cestovanie / dovolenka ✈️": "magenta",
+    "Vzdelávanie / kurzy 📚": "yellow",
 }
 
-# -------------------------------
-# Krajiny + meny
-# -------------------------------
-countries = {
-    "Česko / Czechia – CZK Kč": "CZK",
-    "Eurozóna – EUR €": "EUR",
-    "USA – USD $": "USD",
-    "Veľká Británia – GBP £": "GBP",
-    "Švajčiarsko – CHF Fr": "CHF",
-    "Poľsko – PLN zł": "PLN",
-    "Maďarsko – HUF Ft": "HUF",
-    "Dánsko – DKK kr": "DKK",
-    "Japonsko – JPY ¥": "JPY",
-    "Kanada – CAD $": "CAD",
-    "Čína – CNY ¥": "CNY",
-    "Brazília – BRL R$": "BRL",
-    "Austrália – AUD $": "AUD",
-    "Turecko – TRY ₺": "TRY",
-    "Thajsko – THB ฿": "THB",
-    "India – INR ₹": "INR",
-    "Mexiko – MXN $": "MXN",
-    "Izrael – ILS ₪": "ILS",
-    "Nórsko – NOK kr": "NOK",
-    "Švédsko – SEK kr": "SEK",
-    "Južná Afrika – ZAR R": "ZAR"
-}
+# -----------------------
+# Streamlit app
+# -----------------------
 
-# -------------------------------
-# Inicializácia session state
-# -------------------------------
+st.set_page_config(page_title="Výdavkový denník – CZK + CNB TXT feed", layout="centered")
+
+st.title("💰 Výdavkový denník – CZK + CNB TXT feed")
+st.caption("CZK = 1:1. Ostatné meny podľa denného kurzového lístka ČNB.")
+
+# Inicializácia session_state
 if "expenses" not in st.session_state:
     st.session_state["expenses"] = pd.DataFrame(
-        columns=["Date", "Shop", "Country", "Currency", "Amount",
-                 "Category", "Note", "Converted_CZK", "Rate_date"]
+        columns=["Date", "Shop", "Country", "Currency", "Amount", "Category", "Note", "Converted_CZK", "Rate_date"]
     )
 
-# -------------------------------
-# Formulár na zadanie nákupu
-# -------------------------------
-st.subheader("➕ Pridať nákup")
+# -----------------------
+# Formulár na pridanie nákupu
+# -----------------------
 
-with st.form("expense_form", clear_on_submit=True):
+with st.form("add_expense"):
     date = st.date_input("📅 Dátum nákupu", datetime.date.today())
-    shop = st.text_input("🏪 Obchod / miesto")
-    country = st.selectbox("🌍 Krajina + mena", list(countries.keys()))
-    amount = st.number_input("💰 Suma", min_value=0.0, step=1.0)
+    country_currency = st.selectbox("🌍 Krajina + mena", [
+        "Česko / Czechia – CZK Kč",
+        "Eurozóna – EUR €",
+        "USA – USD $",
+        "Veľká Británia – GBP £",
+        "Švajčiarsko – CHF ₣",
+        "Poľsko – PLN zł",
+        "Maďarsko – HUF Ft",
+        "Dánsko – DKK kr",
+        "Nórsko – NOK kr",
+        "Švédsko – SEK kr",
+        "Japonsko – JPY ¥",
+        "Čína – CNY 元",
+        "Kanada – CAD $",
+        "Austrália – AUD $",
+        "Brazília – BRL R$",
+        "Turecko – TRY ₺",
+        "India – INR ₹",
+        "Izrael – ILS ₪",
+        "Mexiko – MXN $",
+        "Južná Afrika – ZAR R",
+        "Thajsko – THB ฿"
+    ])
+    amount = st.number_input("💰 Suma", min_value=0.0, format="%.2f")
     category = st.selectbox("📂 Kategória", list(categories.keys()))
+    shop = st.text_input("🏪 Obchod / miesto")
     note = st.text_input("📝 Poznámka")
+    submit = st.form_submit_button("💾 Uložiť nákup")
 
-    submitted = st.form_submit_button("💾 Uložiť nákup")
+if submit:
+    # Určenie meny
+    if "CZK" in country_currency:
+        currency = "CZK"
+        rate, rate_date = get_czk_rate(date)
+    else:
+        currency = country_currency.split("–")[-1].strip().split(" ")[0]
+        rate, rate_date = get_currency_rate(date, currency)
 
-    if submitted:
-        currency = countries[country]
-        if currency == "CZK":
-            rate = 1.0
-            rate_date = date
-        else:
-            str_date = date.strftime("%d.%m.%Y")
-            rates = get_cnb_rates(str_date)
-            if not rates or currency not in rates:
-                st.error(f"❌ Kurz pre {currency} sa nepodarilo načítať.")
-                rate = None
-                rate_date = None
-            else:
-                rate = rates[currency]
-                rate_date = date
+    if rate:
+        converted = float(amount) * rate
+        new_row = {
+            "Date": date.strftime("%Y-%m-%d"),
+            "Shop": shop,
+            "Country": country_currency,
+            "Currency": currency,
+            "Amount": float(amount),
+            "Category": category,
+            "Note": note,
+            "Converted_CZK": float(converted),
+            "Rate_date": rate_date,
+        }
+        st.session_state["expenses"] = pd.concat([st.session_state["expenses"], pd.DataFrame([new_row])], ignore_index=True)
 
-        if rate:
-            converted = round(amount * rate, 2)
-            new_row = pd.DataFrame(
-                [[date, shop, country, currency, amount, category, note, converted, rate_date]],
-                columns=st.session_state["expenses"].columns
-            )
-            st.session_state["expenses"] = pd.concat([st.session_state["expenses"], new_row], ignore_index=True)
+        # Kontrolné hlášky
+        if category == "Zábava 🎉" and converted > 2000:
+            st.warning("🎭 Pozor! Za zábavu si minul/a viac ako 2000 Kč. Skús si odložiť niečo bokom 😉")
+        if category == "Potraviny 🛒" and converted > 6000:
+            st.warning("🛒 Uff! Viac ako 6000 Kč za potraviny tento mesiac. Nekŕmiš náhodou celú dedinu? 😆")
 
-            st.success(f"✅ Nákup pridaný! Prepočet: {converted} CZK (kurz z {rate_date})")
+        st.success(f"✅ Nákup pridaný! Prepočet: {converted:.2f} CZK (kurz z {rate_date})")
+    else:
+        st.error(f"❌ Kurz pre {currency} sa nepodarilo načítať.")
 
-            # Humorné/poučné hlášky
-            if category.startswith("Zábava") and converted > 2000:
-                st.warning("🎉 To bola ale poriadna párty! Peňaženka sa ešte spamätáva. 😅")
-            if category.startswith("Potraviny") and converted > 6000:
-                st.warning("🛒 Plná špajza? Alebo si si kúpil(a) celý supermarket? 😆")
-            if category.startswith("Elektronika") and converted > 10000:
-                st.info("💻 Gratulujem! Ale skontroluj, či nepotrebuješ aj nový stôl na tú elektroniku. 😜")
+# -----------------------
+# Zobrazenie dát
+# -----------------------
 
-# -------------------------------
-# Zoznam nákupov
-# -------------------------------
-st.subheader("🧾 Zoznam nákupov")
-st.dataframe(st.session_state["expenses"], use_container_width=True)
+df = st.session_state["expenses"].copy()
+df["Amount"] = pd.to_numeric(df["Amount"], errors="coerce")
+df["Converted_CZK"] = pd.to_numeric(df["Converted_CZK"], errors="coerce")
 
-# -------------------------------
-# Filter podľa mesiaca a roka
-# -------------------------------
-st.subheader("🗓️ Filter podľa mesiaca a roka")
+st.subheader("📜 Zoznam nákupov")
+st.dataframe(df, use_container_width=True)
 
-if not st.session_state["expenses"].empty:
-    st.session_state["expenses"]["Date"] = pd.to_datetime(st.session_state["expenses"]["Date"])
+# -----------------------
+# Súhrn
+# -----------------------
 
-    years = sorted(st.session_state["expenses"]["Date"].dt.year.unique())
-    selected_year = st.selectbox("Vyber rok", years, index=len(years)-1)
+total = df["Converted_CZK"].sum()
+st.subheader("📊 Súhrn")
+st.metric("Celkové výdavky", f"{total:,.2f} CZK")
 
-    months = {
-        1: "Január", 2: "Február", 3: "Marec", 4: "Apríl",
-        5: "Máj", 6: "Jún", 7: "Júl", 8: "August",
-        9: "September", 10: "Október", 11: "November", 12: "December"
-    }
-    selected_month = st.selectbox("Vyber mesiac", list(months.keys()),
-                                  format_func=lambda x: months[x],
-                                  index=datetime.date.today().month-1)
+# -----------------------
+# Graf podľa kategórií
+# -----------------------
 
-    filtered = st.session_state["expenses"][
-        (st.session_state["expenses"]["Date"].dt.year == selected_year) &
-        (st.session_state["expenses"]["Date"].dt.month == selected_month)
-    ]
-else:
-    filtered = pd.DataFrame()
+if not df.empty:
+    grouped = df.groupby("Category")["Converted_CZK"].sum().reset_index()
+    grouped["Color"] = grouped["Category"].map(categories)
 
-# -------------------------------
-# Súhrn mesačných výdavkov
-# -------------------------------
-st.subheader("📊 Súhrn mesačných výdavkov")
-
-if filtered.empty:
-    st.info("Žiadne výdavky za zvolené obdobie.")
-else:
-    total = filtered["Converted_CZK"].sum()
-    st.metric("Celkové výdavky", f"{total:.2f} CZK")
-
-    grouped = filtered.groupby("Category")["Converted_CZK"].sum().reset_index()
-
-    # Altair graf s farbami podľa kategórie
-    chart = alt.Chart(grouped).mark_bar().encode(
-        x=alt.X("Category:N", title="Kategória"),
-        y=alt.Y("Converted_CZK:Q", title="Výdavky v CZK"),
-        color=alt.Color("Category:N",
-                        scale=alt.Scale(domain=list(categories.keys()),
-                                        range=list(categories.values())),
-                        legend=alt.Legend(title="Kategórie")),
-        tooltip=["Category", "Converted_CZK"]
-    ).properties(width=700, height=450)
-
+    chart = (
+        alt.Chart(grouped)
+        .mark_bar()
+        .encode(
+            x=alt.X("Category:N", sort="-y", title="Kategória"),
+            y=alt.Y("Converted_CZK:Q", title="Výdavky v CZK"),
+            color=alt.Color("Category:N", scale=alt.Scale(domain=list(categories.keys()), range=list(categories.values()))),
+            tooltip=["Category", "Converted_CZK"]
+        )
+    )
+    st.subheader("📈 Graf výdavkov podľa kategórií")
     st.altair_chart(chart, use_container_width=True)
