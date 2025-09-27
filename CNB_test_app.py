@@ -5,56 +5,43 @@ import requests
 
 st.set_page_config(page_title="Výdavkový denník – CZK + EUR", layout="centered")
 
-# --- Funkcia: CZK je vždy 1 ---
+# --- CZK je vždy 1 ---
 def get_czk_rate(chosen_date):
-    """CZK sa vždy rovná 1 CZK."""
     return 1.0, chosen_date
 
-# --- Funkcia: EUR z ČNB API ---
+# --- EUR z denni_kurz.txt ---
 def get_eur_rate(chosen_date):
-    """Získa kurz EUR/CZK z ČNB podľa dátumu (fallback na posledný pracovný deň)."""
-    base_url = "https://api.cnb.cz/cnbapi/exrates/daily"
+    base_url = "https://www.cnb.cz/cs/financni-trhy/devizovy-trh/kurzy-devizoveho-trhu/denni_kurz.txt"
     check_date = chosen_date
 
-    for _ in range(7):  # fallback max 7 dní
-        url = f"{base_url}?date={check_date}"
+    for _ in range(7):  # max 7 dní späť
+        url = f"{base_url}?date={dt_date.fromisoformat(check_date).strftime('%d.%m.%Y')}"
         try:
             resp = requests.get(url, timeout=10)
             if resp.status_code == 200:
-                data = resp.json()
-                rates = data.get("rates", [])
-                for r in rates:
-                    if r.get("currencyCode") == "EUR":
-                        rate = r["rate"]
-                        if isinstance(rate, str):
-                            rate = float(rate.replace(",", "."))
-                        else:
-                            rate = float(rate)
-                        amount = int(r["amount"])
-                        return rate / amount, data["validFor"]
-        except Exception as e:
-            print("Chyba EUR:", e)
-
-        # ak kurz neexistuje → posunieme sa deň späť
+                lines = resp.text.split("\n")
+                if len(lines) > 2:  # obsahuje kurzy
+                    for line in lines[2:]:
+                        parts = line.split("|")
+                        if len(parts) >= 5 and parts[3] == "EUR":
+                            amount = int(parts[2])
+                            rate = float(parts[4].replace(",", "."))
+                            return rate / amount, dt_date.fromisoformat(check_date).strftime("%Y-%m-%d")
+        except Exception:
+            pass
+        # fallback deň späť
         prev_date = dt_date.fromisoformat(check_date) - timedelta(days=1)
         check_date = prev_date.strftime("%Y-%m-%d")
-
     return None, None
 
-# --- Zoznam krajín ---
+# --- Krajiny s menami ---
 countries = {
-    "Česko / Czechia": "CZK",
-    "Slovensko / Slovakia": "EUR",
-    "Nemecko / Germany": "EUR",
-    "Francúzsko / France": "EUR",
-    "Taliansko / Italy": "EUR",
-    "Španielsko / Spain": "EUR",
-    "Holandsko / Netherlands": "EUR",
-    "Belgicko / Belgium": "EUR",
-    "Fínsko / Finland": "EUR",
-    "Chorvátsko / Croatia": "EUR",
-    "Grécko / Greece": "EUR",
-    "Portugalsko / Portugal": "EUR",
+    "Česko / Czechia – CZK Kč": "CZK",
+    "Slovensko / Slovakia – EUR €": "EUR",
+    "Nemecko / Germany – EUR €": "EUR",
+    "Francúzsko / France – EUR €": "EUR",
+    "Taliansko / Italy – EUR €": "EUR",
+    "Španielsko / Spain – EUR €": "EUR",
 }
 
 categories = ["Potraviny", "Drogérie", "Doprava", "Reštaurácie a bary", "Zábava"]
@@ -75,7 +62,7 @@ with st.form("input_form"):
     with col1:
         purchase_date = st.date_input("📅 Dátum nákupu", value=dt_date.today())
         shop = st.text_input("🏪 Obchod / miesto")
-        country = st.selectbox("🌍 Krajina", list(countries.keys()))
+        country_display = st.selectbox("🌍 Krajina + mena", list(countries.keys()))
 
     with col2:
         amount = st.number_input("💰 Suma", min_value=0.0, step=0.5)
@@ -85,13 +72,13 @@ with st.form("input_form"):
     submitted = st.form_submit_button("💾 Uložiť nákup")
 
     if submitted:
-        code = countries[country]
+        code = countries[country_display]
 
-        # 🔹 Krok 1: CZK
+        # CZK krok
         if code == "CZK":
             rate, rate_date = get_czk_rate(purchase_date.strftime("%Y-%m-%d"))
 
-        # 🔹 Krok 2: EUR
+        # EUR krok
         elif code == "EUR":
             rate, rate_date = get_eur_rate(purchase_date.strftime("%Y-%m-%d"))
 
@@ -103,7 +90,7 @@ with st.form("input_form"):
             new_record = {
                 "Date": purchase_date,
                 "Shop": shop,
-                "Country": country,
+                "Country": country_display,
                 "Currency": code,
                 "Amount": amount,
                 "Category": category,
@@ -128,8 +115,6 @@ if not st.session_state.data.empty:
     total = st.session_state.data["Converted_CZK"].sum()
     st.markdown(f"💰 Celkové výdavky: **{total:.2f} CZK**")
 
-st.caption("ℹ️ CZK = vždy 1 CZK. EUR = podľa ČNB API. "
+st.caption("ℹ️ CZK = vždy 1 CZK. EUR = podľa ČNB (TXT feed). "
            "Kurzy sa vyhlasujú každý pracovný deň o 14:30. "
            "Ak pre dátum nie sú k dispozícii, použije sa posledný dostupný kurz.")
-
-
