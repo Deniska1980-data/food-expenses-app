@@ -101,14 +101,14 @@ LIMITS = {
     "Potraviny 🛒": 6000,
     "Zábava 🎉": 2000,
     "Elektronika 💻": 10000,
-    "Cestovanie / dovolenka ✈️": 20000
+    "Cestovanie / dovolenka ✈️": 30000
 }
 
 MESSAGES = {
     "Potraviny 🛒": "Pozor! Zdá sa, že doma zakladáš menší supermarket 🛒. Už si minul viac než 6000 Kč na potraviny!",
     "Zábava 🎉": "💡 Poučná rada: zábava je fajn, ale mysli aj na úspory. Na zábavu si už minul viac než 2000 Kč.",
     "Elektronika 💻": "Ups... 💻 To už je skoro nový notebook! Elektronika ťa vyšla cez 10 000 Kč.",
-    "Cestovanie / dovolenka ✈️": "✈️ Haló cestovateľ! Vyzerá to, že už máš zakúpenú letenku na Mars – výdavky na cestovanie prekročili 20 000 Kč."
+    "Cestovanie / dovolenka ✈️": "✈️ Haló cestovateľ! Vyzerá to, že už máš zakúpenú letenku na Mars – výdavky na cestovanie prekročili 30 000 Kč."
 }
 
 CATEGORY_COLORS = {
