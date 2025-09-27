@@ -1,19 +1,18 @@
 import streamlit as st
 import pandas as pd
-from datetime import date as dt_date
 import requests
+from datetime import date as dt_date, datetime
 
 st.set_page_config(page_title="Výdavkový denník", layout="centered")
 
-# --- Language Switch ---
+# --- Language Switch (top right with flags) ---
 col1, col2 = st.columns([8, 2])
 with col2:
     lang = st.radio(
         "",
         ["🇸🇰 Slovensko/Česko", "🇬🇧 English"],
         index=0,
-        horizontal=False
-    )
+        horizontal=False)
 
 # --- Slovak & Czech texts ---
 texts_sk = {
@@ -44,8 +43,7 @@ texts_sk = {
     "countries": ["Slovensko / Slovensko", "Česko / Česko", "Chorvátsko / Chorvatsko", "Iné / Jiné"],
     "currencies": ["CZK", "EUR", "USD", "GBP"],
     "categories": ["Potraviny / Potraviny", "Drogérie / Drogérie", "Doprava / Doprava", 
-                   "Reštaurácie a bary / Restaurace a bary", "Zábava / Zábava"]
-}
+                   "Reštaurácie a bary / Restaurace a bary", "Zábava / Zábava"]}
 
 # --- English texts ---
 texts_en = {
@@ -70,8 +68,7 @@ texts_en = {
     "empty": "No purchases yet. Add at least one to see your data ✨",
     "countries": ["Slovakia", "Czechia", "Croatia", "Other"],
     "currencies": ["CZK", "EUR", "USD", "GBP"],
-    "categories": ["Food", "Drugstore", "Transport", "Restaurants & Bars", "Entertainment"]
-}
+    "categories": ["Food", "Drugstore", "Transport", "Restaurants & Bars", "Entertainment"]}
 
 # --- Choose language ---
 t = texts_sk if lang.startswith("🇸🇰") else texts_en
@@ -79,8 +76,7 @@ t = texts_sk if lang.startswith("🇸🇰") else texts_en
 # --- Initialize DataFrame ---
 if "data" not in st.session_state:
     st.session_state.data = pd.DataFrame(columns=[
-        "Date", "Shop", "Country", "Currency", "Amount", "Category", "Note", "Converted_CZK"
-    ])
+        "Date", "Shop", "Country", "Currency", "Amount", "Category", "Note", "Converted_CZK"])
 
 # --- Title and Intro ---
 st.title(t["title"])
@@ -93,8 +89,10 @@ with st.form("input_form"):
     col1, col2 = st.columns(2)
 
     with col1:
-        min_date = dt_date(2024, 1, 1)
-        date = st.date_input(t["date"], value=dt_date.today(), min_value=min_date)
+        date = st.date_input(
+            t["date"], 
+            value=dt_date.today(), 
+            min_value=datetime(2024, 1, 1).date())
         shop = st.text_input(t["shop"])
         country = st.selectbox(t["country"], t["countries"])
 
@@ -106,23 +104,24 @@ with st.form("input_form"):
     note = st.text_input(t["note"])
     submitted = st.form_submit_button(t["save"])
 
+    # --- Conversion using CNB API ---
+    rate = 1.0
+    if currency != "CZK":
+        try:
+            url = f"https://api.cnb.cz/cnbapi/exrates/daily?date={date.strftime('%Y-%m-%d')}"
+            response = requests.get(url)
+            data = response.json()
+
+            for r in data.get("rates", []):
+                code = r.get("code") or r.get("currency")
+                if code and currency in code:
+                    rate = float(r["rate"]) / float(r["amount"])
+                    break
+
+        except Exception as e:
+            st.error(f"Chyba pri načítaní kurzu ČNB: {e}")
+
     if submitted:
-        # --- Get exchange rate from CNB API ---
-        rate = 1.0
-        if currency != "CZK":
-            try:
-                url = f"https://api.cnb.cz/cnbapi/exrates/daily?date={date.strftime('%Y-%m-%d')}"
-                response = requests.get(url)
-                data = response.json()
-
-                # vyhľadať záznam podľa kódu meny
-                for r in data["rates"]:
-                    if r["code"] == currency:
-                        rate = float(r["rate"]) / float(r["amount"])
-                        break
-            except Exception as e:
-                st.error(f"Chyba pri načítaní kurzu ČNB: {e}")
-
         converted = amount * rate
         new_record = {
             "Date": date,
@@ -132,12 +131,10 @@ with st.form("input_form"):
             "Amount": amount,
             "Category": category,
             "Note": note,
-            "Converted_CZK": round(converted, 2)
-        }
+            "Converted_CZK": round(converted, 2)}
         st.session_state.data = pd.concat(
             [st.session_state.data, pd.DataFrame([new_record])],
-            ignore_index=True
-        )
+            ignore_index=True)
         st.success(t["added"])
 
 # --- Display Table ---
