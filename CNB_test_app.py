@@ -9,29 +9,31 @@ st.set_page_config(page_title="Výdavkový denník", layout="centered")
 def get_cnb_rate(currency_code, chosen_date):
     """Vracia kurz voči CZK pre danú menu a dátum, fallback na posledný dostupný deň."""
     if currency_code == "CZK":
-        # CZK = vždy 1
-        return 1.0, chosen_date
-    
-    # Pre EUR a ďalšie meny voláme API
+        return 1.0, chosen_date  # CZK je vždy 1:1
+
     base_url = "https://api.cnb.cz/cnbapi/exrates/daily"
     check_date = chosen_date
-    for _ in range(7):  # max 7 dní späť
-        url = f"{base_url}?date={check_date.isoformat()}"
+
+    for _ in range(7):  # max. 7 dní späť
+        url = f"{base_url}?date={check_date}"
         try:
             resp = requests.get(url, timeout=10)
             if resp.status_code == 200:
                 data = resp.json()
                 for r in data.get("rates", []):
-                    if r["curr"] == currency_code:
-                        rate = float(r["rate"].replace(",", "."))
+                    if r["currencyCode"] == currency_code:
+                        rate = float(r["rate"])
                         amount = int(r["amount"])
-                        return rate / amount, check_date
+                        return rate / amount, r["validFor"]
         except Exception:
             pass
-        check_date -= timedelta(days=1)
+        # ak nenájdeme, posunieme sa o deň späť
+        prev_date = dt_date.fromisoformat(check_date) - timedelta(days=1)
+        check_date = prev_date.strftime("%Y-%m-%d")
+
     return None, None
 
-# --- Krajiny ---
+# --- Krajiny a meny (CZK + EUR) ---
 countries = {
     "Česko / Czechia": "CZK",
     "Nemecko / Germany": "EUR",
@@ -58,14 +60,16 @@ if "data" not in st.session_state:
 
 # --- UI ---
 st.title("💸 Výdavkový denník – CZK + EUR test")
-st.markdown("Česko = CZK, krajiny eurozóny = EUR (kurzy z ČNB).")
+st.markdown("Česko = CZK, eurozóna = EUR (kurzy ČNB).")
 
 with st.form("input_form"):
     col1, col2 = st.columns(2)
+
     with col1:
         purchase_date = st.date_input("📅 Dátum nákupu", value=dt_date.today())
         shop = st.text_input("🏪 Obchod / miesto")
         country = st.selectbox("🌍 Krajina", list(countries.keys()))
+
     with col2:
         amount = st.number_input("💰 Suma", min_value=0.0, step=0.5)
         category = st.selectbox("📂 Kategória", categories)
@@ -75,7 +79,7 @@ with st.form("input_form"):
 
     if submitted:
         code = countries[country]
-        rate, rate_date = get_cnb_rate(code, purchase_date)
+        rate, rate_date = get_cnb_rate(code, purchase_date.strftime("%Y-%m-%d"))
 
         if rate:
             converted = round(amount * rate, 2)
