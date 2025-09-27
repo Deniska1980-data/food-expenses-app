@@ -1,6 +1,6 @@
 # 💸 Food Expenses App / Výdavkový denník („Výdejový deník“)
 
-📌 [Open the app on Streamlit](https://food-expenses-app-p5tts7gtpumedcsdkhdlw4.streamlit.app)
+📌 [Open the app on Streamlit](https://food-expenses-app-phgvzfp3bej2cnnnujlmvm.streamlit.app/)
 
 ---
 ## 🇬🇧 English
