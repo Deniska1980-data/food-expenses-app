@@ -170,3 +170,4 @@ if not st.session_state.data.empty:
         st.info(t["tip_info"].format(cat=top_cat, pct=pct))
 else:
     st.info(t["empty"])
+
