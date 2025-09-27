@@ -3,38 +3,35 @@ import pandas as pd
 from datetime import date as dt_date, timedelta
 import requests
 
-st.set_page_config(page_title="Výdavkový denník – CZK + EUR", layout="centered")
+st.set_page_config(page_title="Výdavkový denník CZK + EUR", layout="centered")
 
-# --- CZK je vždy 1 ---
+# --- Funkcia pre CZK ---
 def get_czk_rate(chosen_date):
-    return 1.0, chosen_date
+    return 1.0, chosen_date  # vždy 1 CZK
 
-# --- EUR z denni_kurz.txt ---
+# --- Funkcia pre EUR (TXT feed CNB) ---
 def get_eur_rate(chosen_date):
-    base_url = "https://www.cnb.cz/cs/financni-trhy/devizovy-trh/kurzy-devizoveho-trhu/denni_kurz.txt"
+    base_url = "https://www.cnb.cz/cs/financni-trhy/devizovy-trh/kurzy-devizoveho-trhu/kurzy-devizoveho-trhu/denni_kurz.txt"
     check_date = chosen_date
 
-    for _ in range(7):  # max 7 dní späť
+    for _ in range(7):  # skúsime max 7 dní späť
         url = f"{base_url}?date={dt_date.fromisoformat(check_date).strftime('%d.%m.%Y')}"
-        try:
-            resp = requests.get(url, timeout=10)
-            if resp.status_code == 200:
-                lines = resp.text.split("\n")
-                if len(lines) > 2:  # obsahuje kurzy
-                    for line in lines[2:]:
-                        parts = line.split("|")
-                        if len(parts) >= 5 and parts[3] == "EUR":
-                            amount = int(parts[2])
-                            rate = float(parts[4].replace(",", "."))
-                            return rate / amount, dt_date.fromisoformat(check_date).strftime("%Y-%m-%d")
-        except Exception:
-            pass
+        resp = requests.get(url, timeout=10)
+        if resp.status_code == 200:
+            lines = resp.text.split("\n")
+            if len(lines) > 2:
+                for line in lines[2:]:
+                    parts = line.split("|")
+                    if len(parts) >= 5 and parts[3] == "EUR":
+                        amount = int(parts[2])
+                        rate = float(parts[4].replace(",", "."))
+                        return rate / amount, dt_date.fromisoformat(check_date).strftime("%Y-%m-%d")
         # fallback deň späť
         prev_date = dt_date.fromisoformat(check_date) - timedelta(days=1)
         check_date = prev_date.strftime("%Y-%m-%d")
     return None, None
 
-# --- Krajiny s menami ---
+# --- Definícia krajín ---
 countries = {
     "Česko / Czechia – CZK Kč": "CZK",
     "Slovensko / Slovakia – EUR €": "EUR",
@@ -42,6 +39,10 @@ countries = {
     "Francúzsko / France – EUR €": "EUR",
     "Taliansko / Italy – EUR €": "EUR",
     "Španielsko / Spain – EUR €": "EUR",
+    "Holandsko / Netherlands – EUR €": "EUR",
+    "Belgicko / Belgium – EUR €": "EUR",
+    "Fínsko / Finland – EUR €": "EUR",
+    "Chorvátsko / Croatia – EUR €": "EUR"
 }
 
 categories = ["Potraviny", "Drogérie", "Doprava", "Reštaurácie a bary", "Zábava"]
@@ -74,11 +75,11 @@ with st.form("input_form"):
     if submitted:
         code = countries[country_display]
 
-        # CZK krok
+        # --- CZK krok ---
         if code == "CZK":
             rate, rate_date = get_czk_rate(purchase_date.strftime("%Y-%m-%d"))
 
-        # EUR krok
+        # --- EUR krok ---
         elif code == "EUR":
             rate, rate_date = get_eur_rate(purchase_date.strftime("%Y-%m-%d"))
 
@@ -118,3 +119,4 @@ if not st.session_state.data.empty:
 st.caption("ℹ️ CZK = vždy 1 CZK. EUR = podľa ČNB (TXT feed). "
            "Kurzy sa vyhlasujú každý pracovný deň o 14:30. "
            "Ak pre dátum nie sú k dispozícii, použije sa posledný dostupný kurz.")
+
