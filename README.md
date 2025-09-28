@@ -23,12 +23,13 @@ Plne funkčná aplikácia na správu výdavkov s podporou viacerých mien, grafm
 
 ## 🖼 Screenshoty
 ### CZ verzia
-![CZ verzia](screenshot_CZK_nova_appka.JPG)
+<img src="screenshot_CZK_nova_appka.JPG" alt="CZ verzia" width="400"/>
 
 ### EN verzia
-![EN verzia](screenshot_ENG_nova_appka.JPG)
+<img src="screenshot_ENG_nova_appka.JPG" alt="EN verzia" width="400"/>
 
 ---
+
 ## 📌 Aktuálny stav
 ✅ Funkčná aplikácia – testovaná na viacerých zariadeniach (Huawei, Samsung, iPhone, Lenovo notebook)  
 ✅ Testované aj mimo ČR (Slovensko, Nemecko)  
