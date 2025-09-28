@@ -6,7 +6,7 @@ Plne funkčná aplikácia na správu výdavkov s podporou viacerých mien, grafm
 👉 [**Spustiť aplikáciu online**](https://food-expenses-app-phgvzfp3bej2cnnnujlmvm.streamlit.app/)  
 
 📱 QR kód pre rýchle spustenie:  
-![QR kód](food_expenses_app_qr.png)
+<img src="food_expenses_app_qr.png" alt="QR kód" width="120"/>
 
 ---
 
@@ -29,8 +29,16 @@ Plne funkčná aplikácia na správu výdavkov s podporou viacerých mien, grafm
 ![EN verzia](screenshot_ENG_nova_appka.JPG)
 
 ---
+## 📌 Aktuálny stav
+✅ Funkčná aplikácia – testovaná na viacerých zariadeniach (Huawei, Samsung, iPhone, Lenovo notebook)  
+✅ Testované aj mimo ČR (Slovensko, Nemecko)  
+✅ Stabilný prepočet mien + grafy + export  
 
-## 🚀 Použité technológie
+🚧 **UX/UI dizajn** – vo vývoji (plánovaný originálny vizuál vo forme *„výťahu“*)  
+
+---
+
+## 🛠️ Použité technológie
 - Python  
 - Streamlit  
 - Pandas  
@@ -38,12 +46,15 @@ Plne funkčná aplikácia na správu výdavkov s podporou viacerých mien, grafm
 
 ---
 
-## 📌 Aktuálny stav
-✅ Funkčná aplikácia – testovaná na viacerých zariadeniach (Huawei, Samsung, iPhone, Lenovo notebook)  
-✅ Testované aj mimo ČR (Slovensko, Nemecko)  
-✅ Stabilný prepočet mien + grafy + export  
+## 📚 Využité znalosti a kurzy
+Táto aplikácia nevznikla náhodou – je výsledkom kombinácie mojej práce, testovania a poznatkov, ktoré som získala v rámci niekoľkých vzdelávacích kurzov:
 
-🔜 **Ďalší krok:** vizuálna úprava (grafika vo forme "výťahu" pre kategórie a meny)  
+- **Python for Everybody (University of Michigan, Coursera)** – zvládnutie základov a pokročilejších techník Pythonu, práca s dátami, API a regulárnymi výrazmi.  
+- **DaPython (PyLadies)** – praktické cvičenia a projekty v Pythone, vrátane práce s pandas a vizualizáciami.  
+- **UX/UI Design (California Institute of the Arts, Coursera)** – návrh užívateľského rozhrania, prístupnosť, vizuálne prvky a tvorba intuitívnych dizajnov.  
+- **Generative AI Data Analyst Specialization (Vanderbilt University)** – využitie AI v dátovej analytike, prompt engineering a efektívna práca s nástrojmi ako ChatGPT.  
+
+👉 Všetky tieto kurzy mi pomohli poskladať appku krok za krokom – od návrhu, cez písanie a ladenie kódu, až po UX/UI dizajn a testovanie na viacerých zariadeniach a v rôznych krajinách.  
 
 ---
 
@@ -53,4 +64,4 @@ Viď [LICENCE](LICENCE).
 
 ---
 
-👩‍💻 Autor: **Denisa Pitnerová (2025)**  
+👩‍💻 Autor: **Denisa Pitnerová (2025)**
