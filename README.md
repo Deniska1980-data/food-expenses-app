@@ -38,6 +38,11 @@ Plne funkčná aplikácia na správu výdavkov s podporou viacerých mien, grafm
 🚧 **UX/UI dizajn** – vo vývoji (plánovaný originálny vizuál vo forme *„výťahu“*)  
 
 ---
+📌 Verzie aplikácie
+- **CNB_test_app.py** – hlavná a aktuálna verzia (bilingválna, API ČNB, grafy, kategórie, export, plne funkčná ✅)  
+- **app.py a ENG_app.py** – staršie verzie (prototypy bez plnej funkcionality, ponechané pre dokumentáciu vývoja)
+
+---
 
 ## 🛠️ Použité technológie
 - Python  
