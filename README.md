@@ -1,27 +1,27 @@
-# 🧾 Food Expenses App / Výdavkový denník
+# Food Expenses App / Výdavkový denník
 
 Bilingual expenses app (CZK base currency, CNB daily rates) built with **Streamlit**.  
 Plne funkčná aplikácia na správu výdavkov s podporou viacerých mien, grafmi a exportom dát.  
 
-👉 [**Spustiť aplikáciu online**](https://food-expenses-app-phgvzfp3bej2cnnnujlmvm.streamlit.app/)  
+👉 [Spustiť aplikáciu online](https://food-expenses-app-phgvzfp3bej2cnnnujlmvm.streamlit.app/)  
 
 📱 QR kód pre rýchle spustenie:  
 <img src="food_expenses_app_qr.png" alt="QR kód" width="120"/>
 
 ---
 
-## ✨ Funkcie
-- **Bilingválna aplikácia (čeština / angličtina)**  
-- **Podpora viacerých mien** – automatický prepočet na CZK podľa denných kurzov ČNB  
-- **Fallback mechanizmus** – ak kurz nie je dostupný, použije sa posledný známy  
-- **Kategórie s ikonami / piktogramami** (potraviny, doprava, drogérie, reštaurácie & bary, zdravie, zábava…)  
-- **Prehľadné tabuľky** všetkých nákupov s detailami (dátum, krajina, mena, kurz, kategória, poznámka)  
-- **Grafy výdavkov podľa kategórií**  
-- **Export do CSV** pre ďalšiu analýzu  
+## Funkcie
+- Bilingválna aplikácia (čeština / angličtina)  
+- Podpora viacerých mien – automatický prepočet na CZK podľa denných kurzov ČNB  
+- Fallback mechanizmus – ak kurz nie je dostupný, použije sa posledný známy  
+- Kategórie s ikonami / piktogramami (potraviny, doprava, drogérie, reštaurácie & bary, zdravie, zábava…)  
+- Prehľadné tabuľky všetkých nákupov s detailami (dátum, krajina, mena, kurz, kategória, poznámka)  
+- Grafy výdavkov podľa kategórií  
+- Export do CSV pre ďalšiu analýzu  
 
 ---
 
-## 🖼 Screenshoty
+## Screenshoty
 ### CZ verzia
 <img src="screenshot_CZK_nova_appka.JPG" alt="CZ verzia" width="400"/>
 
@@ -30,21 +30,57 @@ Plne funkčná aplikácia na správu výdavkov s podporou viacerých mien, grafm
 
 ---
 
-## 📌 Aktuálny stav
-✅ Funkčná aplikácia – testovaná na viacerých zariadeniach (Huawei, Samsung, iPhone, Lenovo notebook)  
-✅ Testované aj mimo ČR (Slovensko, Nemecko)  
-✅ Stabilný prepočet mien + grafy + export  
+## Aktuálny stav
+- ✅ Funkčná aplikácia – testovaná na viacerých zariadeniach (Huawei, Samsung, iPhone, Lenovo notebook)  
+- ✅ Testované aj mimo ČR (Slovensko, Nemecko)  
+- ✅ Stabilný prepočet mien + grafy + export  
 
-🚧 **UX/UI dizajn** – vo vývoji (plánovaný originálny vizuál vo forme *„výťahu“*)  
+- 🚧 UX/UI dizajn – vo vývoji (plánovaný originálny vizuál vo forme *„výťahu“*)  
 
 ---
-📌 Verzie aplikácie
+
+## Verzie aplikácie
 - **CNB_test_app.py** – hlavná a aktuálna verzia (bilingválna, API ČNB, grafy, kategórie, export, plne funkčná ✅)  
-- **app.py a ENG_app.py** – staršie verzie (prototypy bez plnej funkcionality, ponechané pre dokumentáciu vývoja)
+- **app.py a ENG_app.py** – staršie verzie (prototypy bez plnej funkcionality, ponechané pre dokumentáciu vývoja)  
 
 ---
 
-## 🛠️ Použité technológie
+## Testovanie a vývoj
+Aplikácia prešla viacerými fázami vývoja, testovania a ladenia:  
+
+### Testované prostredia
+- **Zariadenia:** Huawei, Samsung, iPhone, Lenovo notebook  
+- **Krajiny:** Česko, Slovensko, Nemecko  
+- **Čas:** testy v rôznych časoch počas dňa, aby sa overilo správanie API  
+
+### Problémy počas vývoja
+- ❌ **Chyby pri sťahovaní kurzov z API ČNB** – nie vždy bol kurz dostupný pre vybraný dátum  
+- ❌ **Nefunkčný graf** v prvej verzii – vizualizácia padala pri prázdnych dátach  
+- ❌ **Dvojjazyčnosť** – prvé verzie miešali CZ a EN dáta v jednej tabuľke  
+- ❌ **Export dát** – bolo potrebné nastaviť správne formáty pre CSV/Excel  
+- ❌ **Chyby v kóde** – napríklad knižnica *matplotlib* nefunguje v Streamlite, alebo chýbajúce `)` a `"`  
+
+### Riešenia
+- ✅ Implementovaný **fallback mechanizmus** – ak nie je kurz k dátumu, použije sa posledný známy  
+- ✅ Graf bol opravený a prispôsobený tak, aby zvládal aj prázdne dataset-y  
+- ✅ Pridaná logika na **oddelenie jazykových verzií** (CZ/EN)  
+- ✅ Implementovaný **export do CSV** cez pandas  
+- ✅ Chyby v kóde riešené postupným ladením – kontrola riadkov, odstránenie nefunkčných knižníc (napr. matplotlib tooltip), oprava syntax chýb  
+
+### Práca s AI
+Pri písaní kódu som využívala **AI ako pomocníka** (ChatGPT) – na návrh častí kódu alebo štruktúry.  
+Ale ja som bola tá, kto musel:  
+- testovať aplikáciu v Streamlite,  
+- identifikovať chyby a upozorniť AI („aha, tu je chyba, matplotlib tooltip tu nefunguje, odstráň ho“),  
+- opravovať jednoduché chyby ako chýbajúce `)` alebo `"`,  
+- hľadať API dokumentáciu ČNB,  
+- spúšťať appku znova a znova a postupne ju ladiť.  
+
+👉 AI bol pomocník, ale všetko som musela **navrhnúť, otestovať, skontrolovať a dotiahnuť sama**.  
+
+---
+
+## Použité technológie
 - Python  
 - Streamlit  
 - Pandas  
@@ -52,19 +88,43 @@ Plne funkčná aplikácia na správu výdavkov s podporou viacerých mien, grafm
 
 ---
 
-## 📚 Využité znalosti a kurzy
-Táto aplikácia nevznikla náhodou – je výsledkom kombinácie mojej práce, testovania a poznatkov, ktoré som získala v rámci niekoľkých vzdelávacích kurzov:
+## Využité znalosti a kurzy
+Táto aplikácia je výsledkom kombinácie mojej práce a poznatkov z kurzov:  
 
 - **Python for Everybody (University of Michigan, Coursera)** – zvládnutie základov a pokročilejších techník Pythonu, práca s dátami, API a regulárnymi výrazmi.  
 - **DaPython (PyLadies)** – praktické cvičenia a projekty v Pythone, vrátane práce s pandas a vizualizáciami.  
 - **UX/UI Design (California Institute of the Arts, Coursera)** – návrh užívateľského rozhrania, prístupnosť, vizuálne prvky a tvorba intuitívnych dizajnov.  
 - **Generative AI Data Analyst Specialization (Vanderbilt University)** – využitie AI v dátovej analytike, prompt engineering a efektívna práca s nástrojmi ako ChatGPT.  
 
-👉 Všetky tieto kurzy mi pomohli poskladať appku krok za krokom – od návrhu, cez písanie a ladenie kódu, až po UX/UI dizajn a testovanie na viacerých zariadeniach a v rôznych krajinách.  
+---
+
+## Testing and Development (English Summary)
+The app went through several iterations of **testing and debugging**:  
+
+- Tested on multiple devices (Huawei, Samsung, iPhone, Lenovo notebook)  
+- Tested by users in different countries (CZ, SK, DE)  
+- Real-world issues: CNB API not always available, chart crashing with empty datasets, mixed CZ/EN data, CSV export issues, syntax errors in Python code  
+
+### Solutions
+- Implemented **fallback mechanism** for missing CNB rates  
+- Fixed chart rendering and language separation  
+- Added CSV export  
+- Debugged Python syntax issues (`)` and `"`)  
+
+### Working with AI
+I used **AI (ChatGPT)** as a coding assistant.  
+However, I was the one who:  
+- tested the app in Streamlit,  
+- identified errors and told AI what to fix,  
+- removed non-working parts (e.g., matplotlib tooltip in Streamlit),  
+- searched CNB API docs,  
+- deployed and re-tested until the app was fully functional.  
+
+👉 AI was just a helper – I designed, tested, debugged and delivered the **final working app** myself.  
 
 ---
 
-## ⚖️ Licencia
+## Licencia
 Tento projekt je publikovaný pod licenciou **MIT**.  
 Viď [LICENCE](LICENCE).  
 
