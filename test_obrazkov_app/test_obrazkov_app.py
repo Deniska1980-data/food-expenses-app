@@ -1,28 +1,38 @@
 import streamlit as st
+from datetime import date
 from PIL import Image
-import datetime
 
-# Nastavenie názvu stránky
-st.set_page_config(page_title="Výdavkový denník – Výtahový mód", page_icon="🧾")
+# Nastavenie stránky
+st.set_page_config(page_title="Výdavkový denník", layout="centered")
 
-# Nadpis aplikácie
-st.markdown("## 🧾 Výdavkový denník – Výtahový mód")
+# Hlavička
+st.markdown("## 🛗 Výdavkový denník / Výdajový deník")
 
-# Zobrazenie obrázku č. 1 – výťah so zatvorenými dverami
-obrazok = Image.open("images_vytah_appka/vytah_zavrete_dvere_obrazok1.png")
-st.image(obrazok, caption="Obrázok č. 1 – Začiatok cesty výťahom", use_column_width=True)
+# Načítanie obrázka výťahu (obrázok 1)
+image_path = "images_vytah_appka/vytah_zavrete_dvere_obrazok1.png"
+image = Image.open(image_path)
 
-# Rozdelenie obrazovky na 2 stĺpce, aby boli kalendár a jazyk vedľa seba
-col1, col2 = st.columns(2)
+# Layout: Kalendár a jazykový prepínač zarovno s obrázkom
+col1, col2, col3 = st.columns([1, 2, 1])
 
 with col1:
-    # Reálny kalendárik na výber dátumu
-    datum = st.date_input("📅 Vyber dátum:", datetime.date.today())
-
+    st.write("")  # prázdny riadok na vyrovnanie
 with col2:
-    # Reálny prepínač jazyka (s vlajkami v texte)
-    jazyk = st.selectbox("🌐 Vyber jazyk:", ["🇸🇰 Slovenský", "🇨🇿 Český", "🇬🇧 Anglický"])
+    # Funkčný výber dátumu
+    selected_date = st.date_input("📅 Vyber dátum", date.today(), key="calendar_top")
+    
+    # Funkčný výber jazyka
+    language = st.selectbox(
+        "🌐 Zvoľ jazyk / Choose language",
+        ["Slovensky / Česky", "English"],
+        key="language_top"
+    )
+with col3:
+    st.write("")
 
-# Potvrdenie výberov pre používateľa (dá sa neskôr upraviť alebo skryť)
-st.success(f"✅ Zvolený dátum: {datum}")
-st.info(f"🌍 Zvolený jazyk: {jazyk}")
+# Zobrazenie obrázka výťahu
+st.image(image, use_column_width=True)
+
+# Voliteľne: zobrazenie výberu jazyka a dátumu pod obrázkom
+st.write(f"🔤 Jazyk: **{language}**")
+st.write(f"📆 Dátum: **{selected_date.strftime('%Y-%m-%d')}**")
