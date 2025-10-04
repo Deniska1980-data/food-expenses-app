@@ -1,27 +1,66 @@
 import streamlit as st
-from PIL import Image
+import datetime
 
-# Nastavenie šírky stránky
-st.set_page_config(layout="centered")
+# Nastav stránku bez rozťahovania
+st.set_page_config(layout="wide")
 
-# Názov aplikácie
-st.title("Výdavkový denník – Výťahový mód 🚪🛗")
+# CSS štýl pre pozíciu prepínačov NAD obrázok
+st.markdown("""
+    <style>
+    .container {
+        position: relative;
+        width: 100%;
+        max-width: 700px;
+        margin: auto;
+    }
 
-# INFO: Načítanie obrázkov z priečinka images_vytah_appka
-obrazok1 = Image.open("images_vytah_appka/vytah_zavrete_dvere_obrazok1.png")
-obrazok2 = Image.open("images_vytah_appka/obrazok_vnutro_vytah_s_appko_obrazok2.JPG")
-obrazok3 = Image.open("images_vytah_appka/zavrete_dvere_vytah_ide_dole_obrazok4.png")
+    .background-img {
+        width: 100%;
+        display: block;
+    }
 
-# Zobrazenie jednotlivých obrázkov s komentármi
-st.subheader("🎬 Začiatok cesty")
-st.image(obrazok1, use_column_width=True, caption="Zatvorené dvere – prízemie (poschodie 0)")
+    .date-box {
+        position: absolute;
+        top: 52%;    /* nastav podľa potreby */
+        left: 32%;   /* nastav podľa potreby */
+        transform: translate(-50%, -50%);
+        z-index: 2;
+    }
 
-st.subheader("🧮 Zadávanie výdavkov")
-st.image(obrazok2, use_column_width=True, caption="Otvorený výťah s aplikáciou")
+    .language-box {
+        position: absolute;
+        top: 52%;
+        left: 70%;
+        transform: translate(-50%, -50%);
+        z-index: 2;
+    }
 
-st.subheader("📉 Ukončenie nákupu")
-st.image(obrazok3, use_column_width=True, caption="Zatvorené dvere – výťah ide dolu")
+    </style>
+""", unsafe_allow_html=True)
 
-# Footer
-st.markdown("---")
-st.markdown("🧠 *Navrhnuté a vytvorené: Deniska1980-data*")
+# Vytvor kontajner s obrázkom a widgetmi
+st.markdown('<div class="container">', unsafe_allow_html=True)
+
+# Reálny výber dátumu
+with st.container():
+    st.markdown('<div class="date-box">', unsafe_allow_html=True)
+    datum = st.date_input("", value=datetime.date.today(), key="datum_vytah")
+    st.markdown('</div>', unsafe_allow_html=True)
+
+# Reálny výber jazyka
+with st.container():
+    st.markdown('<div class="language-box">', unsafe_allow_html=True)
+    jazyk = st.selectbox("", ["🇸🇰 Slovenčina", "🇨🇿 Čeština", "🌐 English"], key="jazyk_vytah")
+    st.markdown('</div>', unsafe_allow_html=True)
+
+# Pozadie – obrázok výťahu
+st.markdown(f'<img class="background-img" src="https://raw.githubusercontent.com/TVOJE_UZIVATELSKE_MENO/Food-Expenses-App/main/images_vytah_appka/vytah_zatvorene_dvere.png" />', unsafe_allow_html=True)
+
+st.markdown('</div>', unsafe_allow_html=True)
+
+# Pokračovanie aplikácie až po výbere dátumu
+if datum:
+    st.success(f"Zvolený dátum: {datum}")
+    st.info(f"Zvolený jazyk: {jazyk}")
+    # Tu môžeš spustiť ďalší krok: otvorenie výťahu, obrázok č. 2
+
