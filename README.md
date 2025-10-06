@@ -1,7 +1,7 @@
-# Food Expenses App / Výdavkový denník
+# Food Expenses App / Výdavkový denník - prototyp
 
 Bilingual expenses app (CZK base currency, CNB daily rates) built with **Streamlit**.  
-Plne funkčná aplikácia na správu výdavkov s podporou viacerých mien, grafmi a exportom dát.  
+Plne funkčná aplikácia na správu výdavkov s podporou viacerých mien, grafmi a exportom dát, ale stále prosím ide iba o testovací prototyp.   
 
 👉 [Spustiť aplikáciu online](https://food-expenses-app-phgvzfp3bej2cnnnujlmvm.streamlit.app/)  
 
