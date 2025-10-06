@@ -41,8 +41,10 @@ Plne funkčná aplikácia na správu výdavkov s podporou viacerých mien, grafm
 
 ## Verzie aplikácie
 - **CNB_test_app.py** – hlavná a aktuálna verzia (bilingválna, API ČNB, grafy, kategórie, export, plne funkčná ✅)  
-- **app.py a ENG_app.py** – staršie verzie (prototypy bez plnej funkcionality, ponechané pre dokumentáciu vývoja)  
-
+- **app.py a ENG_app.py** – staršie verzie (prototypy bez plnej funkcionality, ponechané pre dokumentáciu vývoja)
+  
+📄 Published on Kaggle: My Journey with Lightweight RAG in UX/UI
+https://www.kaggle.com/code/denisapitnerov/my-journey-with-lightweight-rag-in-ux-ui
 ---
 
 ## Testovanie a vývoj
