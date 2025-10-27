@@ -102,6 +102,7 @@ CATEGORIES = {
 # ---------------------------
 
 from random import choice
+from datetime import datetime 
 
 def get_season_image():
     """Return IssueCoin avatar based on season"""
@@ -137,7 +138,7 @@ ISSUECOIN_QUOTES = {
 def issuecoin_message(lang="sk"):
     """Random IssueCoin message with seasonal style"""
     mood = get_season_image()
-    quote = choice(ISSUECOIN_QUOTES[lang])
+    quote = choice(ISSUECOIN_QUOTES.get(lang, ISSUECOINE?QUOTES["sk"]))
     return f"{mood}\n\n{quote}"
 
 # ---------------------------
@@ -296,4 +297,5 @@ if not df.empty:
 
     csv = df.to_csv(index=False).encode("utf-8")
     st.download_button(TEXTS[LANG]["export"], csv, f"expenses_{dt_date.today()}.csv", "text/csv")
+
 
