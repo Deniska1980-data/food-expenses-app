@@ -199,7 +199,11 @@ def get_rate_for(code: str, d: dt_date):
     rate, date_str = parse_rate_from_txt(txt, code)
     if not rate:
         return 1.0, d.isoformat()
-    return rate, datetime.strptime(date_str, "%d.%m.%Y").date().isoformat()
+    try:
+    clean_date = date_str.split("#")[0].strip()
+    return rate, datetime.strptime(clean_date, "%d.%m.%Y").date().isoformat()
+except Exception:
+    return rate, d.isoformat()
 
 # ---------------------------
 # CALENDARIFIC API
@@ -297,4 +301,5 @@ if not df.empty:
 
     csv = df.to_csv(index=False).encode("utf-8")
     st.download_button(TEXTS[LANG]["export"], csv, f"expenses_{dt_date.today()}.csv", "text/csv")
+
 
