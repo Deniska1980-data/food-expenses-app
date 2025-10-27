@@ -98,22 +98,47 @@ CATEGORIES = {
 }
 
 # ---------------------------
-# ISSUECOIN MESSAGES
+# ISSUECOIN – AI AGENT LOGIC
 # ---------------------------
-MESSAGES = {
-    "sk": {
-        "food": "🍎 Potraviny niečo stoja – pri väčšej rodine je to prirodzené. 😉",
-        "fun": "🎉 Zábavy nikdy nie je dosť! Len pozor, aby ti ešte zostalo aj na chlebík. 😉",
-        "drug": "🧴 Drogéria je drahá, hlavne keď sú v tom deti. 😉",
-        "elec": "💻 Nový kúsok? Nech dlho slúži a uľahčí deň. 🚀"
-    },
-    "en": {
-        "food": "🍎 Groceries are pricey – with a bigger family, that’s normal. 😉",
-        "fun": "🎉 There’s never too much fun! Just keep a little left for bread. 😉",
-        "drug": "🧴 Drugstore items can be expensive, especially with kids. 😉",
-        "elec": "💻 New gadget? May it last and make life easier. 🚀"
-    }
+
+from random import choice
+
+def get_season_image():
+    """Return IssueCoin avatar based on season"""
+    month = datetime.now().month
+    if month in [12, 1, 2]:
+        return "🧣 IssueCoin má šál – zima je tu! ❄️"
+    elif month in [3, 4, 5]:
+        return "🌷 IssueCoin má slnečné okuliare – vítaj jar! 😎"
+    elif month in [6, 7, 8]:
+        return "☀️ IssueCoin sa opaľuje – leto v plnom prúde! 🏖️"
+    elif month in [9, 10, 11]:
+        return "🍂 IssueCoin má čiapku – jeseň prichádza. 🍁"
+    return "🙂 IssueCoin je pripravený na výdavky!"
+
+# Základné hlášky – kombinácia vtipných + reaktívnych
+ISSUECOIN_QUOTES = {
+    "sk": [
+        "💡 Ušetri dnes, potešíš sa zajtra!",
+        "💸 Aj drobné sa rátajú – najmä v piatok večer. 😉",
+        "🎉 Nakupuj s rozumom, nie s náladou!",
+        "🛒 Tvoj košík je plný, ale aj tvoj život, dúfam!",
+        "😅 Potraviny rastú ako huby po daždi – aj ceny."
+    ],
+    "en": [
+        "💡 Save today, smile tomorrow!",
+        "💸 Every coin counts – especially on Friday nights. 😉",
+        "🎉 Shop smart, not emotional!",
+        "🛒 Your cart is full – hopefully your heart too!",
+        "😅 Groceries are growing faster than mushrooms!"
+    ]
 }
+
+def issuecoin_message(lang="sk"):
+    """Random IssueCoin message with seasonal style"""
+    mood = get_season_image()
+    quote = choice(ISSUECOIN_QUOTES[lang])
+    return f"{mood}\n\n{quote}"
 
 # ---------------------------
 # COUNTRIES (simplified)
@@ -271,3 +296,4 @@ if not df.empty:
 
     csv = df.to_csv(index=False).encode("utf-8")
     st.download_button(TEXTS[LANG]["export"], csv, f"expenses_{dt_date.today()}.csv", "text/csv")
+
