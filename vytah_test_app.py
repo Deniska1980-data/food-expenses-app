@@ -1,4 +1,4 @@
- import streamlit as st
+import streamlit as st
 import pandas as pd
 import requests
 import altair as alt
@@ -301,6 +301,7 @@ if not df.empty:
 
     csv = df.to_csv(index=False).encode("utf-8")
     st.download_button(TEXTS[LANG]["export"], csv, f"expenses_{dt_date.today()}.csv", "text/csv")
+
 
 
 
