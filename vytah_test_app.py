@@ -18,7 +18,9 @@ st.markdown("""
     html, body, [class*="css"] { font-size: 16px; line-height: 1.6; }
     h1 { font-size: 28px !important; }
     h2 { font-size: 24px !important; }
+    h3 { font-size: 20px !important; }
     .stButton>button { font-size: 18px; padding: 10px 20px; }
+    .stSelectbox>div>div { font-size: 16px; }
     .lang-select { position: absolute; top: 20px; right: 30px; z-index: 999; }
 </style>
 """, unsafe_allow_html=True)
@@ -28,10 +30,10 @@ st.markdown("""
 # ---------------------------
 with st.sidebar:
     st.subheader("⚙️ Nastavenia / Settings")
-    CALENDARIFIC_API = st.text_input("🔑 Calendarific API key", type="password")
+    CALENDARIFIC_API = st.text_input("🔑 Calendarific API key (optional)", type="password")
 
 # ---------------------------
-# LANGUAGE SELECTOR (top-right)
+# LANGUAGE SELECTOR (top-right corner)
 # ---------------------------
 lang_placeholder = st.empty()
 with lang_placeholder.container():
@@ -48,21 +50,21 @@ TEXTS = {
         "app_title": "💰 Výdavkový denník / Výdajový deník",
         "subtitle": "CZK = vždy 1:1. Ostatné meny podľa denného kurzu ČNB. "
                     "Ak pre vybraný deň nie je kurz, použije sa posledný dostupný kurz.",
-        "date": "📅 Dátum nákupu",
-        "country": "🌍 Krajina + mena",
-        "amount": "💵 Suma",
-        "category": "📂 Kategória",
+        "date": "📅 Dátum nákupu / Datum nákupu",
+        "country": "🌍 Krajina + mena / Měna",
+        "amount": "💵 Suma / Částka",
+        "category": "📂 Kategória / Kategorie",
         "shop": "🏬 Obchod / miesto",
         "note": "📝 Poznámka",
-        "save": "💾 Uložiť nákup",
-        "list": "🧾 Zoznam nákupov",
-        "summary": "📊 Súhrn mesačných výdavkov",
-        "total": "Celkové výdavky",
+        "save": "💾 Uložiť nákup / Uložit nákup",
+        "list": "🧾 Zoznam nákupov / Seznam nákupů",
+        "summary": "📊 Súhrn mesačných výdavkov / Souhrn měsíčních výdajů",
+        "total": "Celkové výdavky / Celkové výdaje",
         "rate_err": "❌ Kurz sa nepodarilo načítať.",
         "saved_ok": "Záznam uložený!",
         "rate_info": "Použitý kurz",
         "rate_from": "k",
-        "holiday": "🎉 Štátny sviatok:",
+        "holiday": "🎉 Štátny sviatok / svátek:",
         "export": "💾 Exportovať do CSV"
     },
     "en": {
@@ -97,58 +99,55 @@ CATEGORIES = {
 }
 
 # ---------------------------
-# ISSUECOIN – AGENT
+# ISSUECOIN SEASON LOGIC 🌸☀️🍂❄️
 # ---------------------------
-
 def get_season_avatar():
     month = datetime.now().month
+
     if month in [12, 1, 2]:
-        return "🧣 IssueCoin má šál a hrnček kakaa – zima je tu! ❄️"
+        return (
+            "❄️ IssueCoin má šál, rukavice a hrnček kakaa ☕ – "
+            "vonku sneží, blížia sa Vianoce 🎄 a Silvester 🎆!"
+        )
     elif month in [3, 4, 5]:
-        return "🌷 IssueCoin má okuliare a úsmev – jar prichádza! 😎"
+        return (
+            "🌷 IssueCoin sadí kvety 🌼, zbiera vajíčka 🥚 a usmieva sa – "
+            "jar je tu! Cvičí, behá a má plno energie! 💪🌸"
+        )
     elif month in [6, 7, 8]:
-        return "☀️ IssueCoin sa opaľuje – leto v plnom prúde! 🍦"
+        return (
+            "☀️ IssueCoin má okuliare 😎, je pri mori 🌊 a dáva si zmrzlinu 🍦 – "
+            "leto, dovolenka a prázdniny sú v plnom prúde! 🏖️"
+        )
     elif month in [9, 10, 11]:
-        return "🍂 IssueCoin nesie košík jabĺk – jeseň prichádza! 🍎"
+        return (
+            "🍂 IssueCoin zbiera huby 🍄, borievky a jablká 🍎 – "
+            "vonku je viac dažďa 🌧️, ale nálada zostáva dobrá! ☕"
+        )
     return "🙂 IssueCoin je pripravený na tvoje výdavky!"
 
-# Vtipné + sezónne hlášky
+# Vtipné hlášky
 ISSUECOIN_QUOTES = {
     "sk": [
         "💡 Ušetri dnes, potešíš sa zajtra!",
-        "💸 Aj drobné sa rátajú – najmä v piatok večer. 😉",
+        "💸 Aj drobné sa rátajú – hlavne v piatok večer. 😉",
         "🎉 Nakupuj s rozumom, nie s náladou!",
-        "🛒 Tvoj košík je plný, ale aj tvoj život, dúfam!",
-        "😅 Potraviny rastú ako huby po daždi – aj ceny."
+        "🛒 Tvoj košík je plný, ale aj tvoj život, dúfam! ❤️",
+        "😅 Potraviny rastú ako huby po daždi – aj ceny!"
     ],
     "en": [
         "💡 Save today, smile tomorrow!",
         "💸 Every coin counts – especially on Friday nights. 😉",
         "🎉 Shop smart, not emotional!",
-        "🛒 Your cart is full – hopefully your heart too!",
+        "🛒 Your cart is full – hopefully your heart too! ❤️",
         "😅 Groceries are growing faster than mushrooms!"
     ]
 }
 
-# Hlášky pre špeciálne obdobia
-SEASONAL_QUOTES = {
-    "xmas": "🎄 IssueCoin ti želá krásne Vianoce! Oddýchni si a nemíňaj všetko na darčeky. 🎁",
-    "easter": "🐣 IssueCoin ti praje veselé sviatky jari! Hlavne nemíňaj všetko na vajíčka. 🐰"
-}
-
-def issuecoin_message(lang="sk", is_holiday=False):
-    avatar = get_season_avatar()
-    now = datetime.now()
-    # Sezónne sviatky
-    if 12 == now.month and 10 <= now.day <= 26:
-        quote = SEASONAL_QUOTES["xmas"]
-    elif 3 <= now.month <= 4 and now.day in range(25, 31):
-        quote = SEASONAL_QUOTES["easter"]
-    elif is_holiday:
-        quote = "🎉 Dnes je sviatok – oddýchni a nekupuj zbytočnosti! 😉"
-    else:
-        quote = choice(ISSUECOIN_QUOTES.get(lang, ISSUECOIN_QUOTES["sk"]))
-    return f"{avatar}\n\n{quote}"
+def issuecoin_message(lang="sk"):
+    mood = get_season_avatar()
+    quote = choice(ISSUECOIN_QUOTES.get(lang, ISSUECOIN_QUOTES["sk"]))
+    return f"{mood}\n\n{quote}"
 
 # ---------------------------
 # COUNTRIES (simplified)
@@ -169,13 +168,15 @@ if "expenses" not in st.session_state:
     ])
 
 # ---------------------------
-# CNB HELPERS
+# CNB HELPERS (TXT feed)
 # ---------------------------
 @st.cache_data(ttl=600)
 def fetch_cnb_txt(date_str: str):
     url = f"https://www.cnb.cz/en/financial_markets/foreign_exchange_market/exchange_rate_fixing/daily.txt?date={date_str}"
     r = requests.get(url, timeout=10)
-    return r.text if r.status_code == 200 else None
+    if r.status_code != 200:
+        return None
+    return r.text
 
 def parse_rate_from_txt(txt: str, code: str):
     if not txt:
@@ -187,7 +188,10 @@ def parse_rate_from_txt(txt: str, code: str):
         if len(parts) == 5:
             _, _, qty, c_code, rate = parts
             if c_code == code:
-                return float(rate.replace(",", ".")) / float(qty.replace(",", ".")), header_date
+                try:
+                    return float(rate.replace(",", ".")) / float(qty.replace(",", ".")), header_date
+                except:
+                    return None, None
     return None, None
 
 def get_rate_for(code: str, d: dt_date):
@@ -203,14 +207,17 @@ def get_rate_for(code: str, d: dt_date):
 def check_holiday(api_key: str, country_code="CZ", year=None, month=None, day=None):
     if not api_key:
         return None
-    year = year or datetime.today().year
+    if not year:
+        year = datetime.today().year
     url = f"https://calendarific.com/api/v2/holidays?api_key={api_key}&country={country_code}&year={year}"
     r = requests.get(url)
     if r.status_code != 200:
         return None
-    for h in r.json().get("response", {}).get("holidays", []):
-        dt = h["date"]["datetime"]
-        if dt["year"] == year and dt["month"] == month and dt["day"] == day:
+    holidays = r.json().get("response", {}).get("holidays", [])
+    for h in holidays:
+        if str(h["date"]["datetime"]["year"]) == str(year) and \
+           str(h["date"]["datetime"]["month"]) == str(month) and \
+           str(h["date"]["datetime"]["day"]) == str(day):
             return h["name"]
     return None
 
@@ -235,9 +242,6 @@ with st.form("form"):
         note = st.text_input(TEXTS[LANG]["note"])
     submit = st.form_submit_button(TEXTS[LANG]["save"])
 
-# ---------------------------
-# ON SUBMIT
-# ---------------------------
 if submit:
     code = COUNTRY_TO_CODE[country]
     per_unit, rate_date = (1.0, d.isoformat()) if code == "CZK" else get_rate_for(code, d)
@@ -259,21 +263,16 @@ if submit:
         }])
         st.session_state["expenses"] = pd.concat([st.session_state["expenses"], new_row], ignore_index=True)
 
-        # ✅ Holiday check
-        is_holiday = False
         if CALENDARIFIC_API:
             holiday = check_holiday(CALENDARIFIC_API, "CZ", d.year, d.month, d.day)
             if holiday:
-                is_holiday = True
-                st.success(f"{TEXTS[LANG]['holiday']} {holiday} 🎈")
+                st.success(f"{TEXTS[LANG]['holiday']} {holiday} — uži si deň! 😉")
 
-        # ✅ Save message
         st.success(f"{TEXTS[LANG]['saved_ok']} {converted} CZK — "
                    f"{TEXTS[LANG]['rate_info']}: {round(per_unit,4)} CZK/1 {code} "
                    f"({TEXTS[LANG]['rate_from']} {rate_date})")
 
-        # ✅ IssueCoin reaction (holiday-aware)
-        st.info(issuecoin_message(LANG, is_holiday))
+        st.info(issuecoin_message(LANG))
 
 # ---------------------------
 # TABLE + SUMMARY
@@ -298,3 +297,4 @@ if not df.empty:
 
     csv = df.to_csv(index=False).encode("utf-8")
     st.download_button(TEXTS[LANG]["export"], csv, f"expenses_{dt_date.today()}.csv", "text/csv")
+
