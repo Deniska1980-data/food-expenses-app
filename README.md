@@ -3,10 +3,7 @@
 Bilingual expenses app (CZK base currency, CNB daily rates) built with **Streamlit**.  
 Plne funkčná aplikácia na správu výdavkov s podporou viacerých mien, grafmi a exportom dát, ale stále prosím ide iba o testovací prototyp.   
 
-👉 [Spustiť aplikáciu online](https://food-expenses-app-phgvzfp3bej2cnnnujlmvm.streamlit.app/)  
-
-📱 QR kód pre rýchle spustenie:  
-<img src="food_expenses_app_qr.png" alt="QR kód" width="120"/>
+👉 Apkikacia zde: https://food-expenses-app-s4vpaxhrqfmmseggvxxb7t.streamlit.app/
 
 ---
 
